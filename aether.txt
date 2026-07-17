@@ -44,7 +44,7 @@ end
 Window = Library:CreateWindow({
     Title = '',
     Footer = '🏆 TrophyScripts • Obsidian Edition • discord.gg/trophyscripts',
-    Icon = 95816097006870,
+    Icon = 10747363809,
     NotifySide = 'Right',
     Center = true,
     AutoShow = true,
@@ -7133,6 +7133,7 @@ function loadVisualsTabElements()
 
     -- ===== Custom Sky (LEFT) =====
     local SkySection = Tabs.Visuals:AddLeftGroupbox("🌌 Custom Sky")
+    SkySection:AddButton("🏆 Trophy Sky", function() applyOregonSky("rbxassetid://117792365795089"); sendNotification("Sky", "Trophy Sky enabled") end)
     SkySection:AddButton("✨ Enable Custom Sky", function() applyOregonSky("rbxassetid://104326479029386"); sendNotification("Sky","Custom sky enabled") end)
     SkySection:AddButton("🌌 Suhqc Sky", function() applyOregonSky("rbxassetid://119694110219921"); sendNotification("Sky", "Suhqc Sky enabled") end)
     SkySection:AddButton("🌌 K4 Sky", function() applyOregonSky("rbxassetid://88499578180594"); sendNotification("Sky", "K4 Sky enabled") end)
@@ -7312,7 +7313,7 @@ MenuGroup = Tabs.Settings:AddLeftGroupbox("🏆 Menu Settings")
 MenuGroup:AddLabel("🏆 Script: TrophyScripts — Obsidian Edition", true)
 MenuGroup:AddLabel("🍀 Discord: discord.gg/trophyscripts", true)
 MenuGroup:AddLabel("Game: THA BRONX 3🐍", true)
-MenuGroup:AddLabel("Developed By EL FULLY", true)
+MenuGroup:AddLabel("Developed By Zap 🧙🏽‍♂️", true)
 MenuGroup:AddLabel("Status: Obsidian Edition Loaded ✓", true)
 MenuGroup:AddDivider()
 
@@ -7379,6 +7380,10 @@ if HeadTagSettings.StyleVersion ~= 3 then
     HeadTagSettings.Speed = 8
     HeadTagSettings.StyleVersion = 3
 end
+-- New color options — added without touching existing settings.
+HeadTagSettings.CustomColor1 = HeadTagSettings.CustomColor1 or Color3.fromRGB(255, 196, 70)
+HeadTagSettings.CustomColor2 = HeadTagSettings.CustomColor2 or Color3.fromRGB(48, 217, 130)
+HeadTagSettings.TagColor = HeadTagSettings.TagColor or Color3.fromRGB(255, 140, 0)
 
 HeadTagGroup = Tabs.Settings:AddRightGroupbox("🏷️ Animated Head Text")
 HeadTagGroup:AddToggle("MiamiHeadTagEnabled", {
@@ -7390,18 +7395,18 @@ HeadTagGroup:AddToggle("MiamiHeadTagEnabled", {
         end
     end
 })
+HeadTagGroup:AddDropdown("MiamiHeadTagColor", {
+    Text = "🎨 Name Tag Color",
+    Values = {"Miami Split", "White", "Black", "Gray", "Red", "Orange", "Yellow", "Green", "Lime", "Cyan", "Blue", "Navy", "Purple", "Pink", "Magenta", "Gold", "Silver", "Brown", "Miami Wave", "Rainbow Wave", "Fire", "Ice", "Toxic", "Royal"},
+    Default = HeadTagSettings.Style or "Miami Split",
+    Callback = function(value) HeadTagSettings.Style = normalizeDropdownValue(value) end
+})
 HeadTagGroup:AddInput("MiamiHeadTagText", {
     Text = "Text", Default = HeadTagSettings.Text, Placeholder = "Text above your head",
     Numeric = false, Finished = true,
     Callback = function(value)
         HeadTagSettings.Text = tostring(value or "") ~= "" and tostring(value) or "discord.gg/trophyscripts"
     end
-})
-HeadTagGroup:AddDropdown("MiamiHeadTagStyle", {
-    Text = "Moving Gradient",
-    Values = {"Miami Split", "Miami Wave", "Rainbow Wave", "Fire", "Ice", "Toxic", "Royal"},
-    Default = HeadTagSettings.Style,
-    Callback = function(value) HeadTagSettings.Style = normalizeDropdownValue(value) end
 })
 HeadTagGroup:AddDropdown("MiamiHeadTagFont", {
     Text = "Font", Values = {"GothamBlack", "GothamBold", "Arcade", "SciFi", "Cartoon", "Code"},
@@ -7723,6 +7728,26 @@ task.spawn(function()
         ["Toxic"] = {Color3.fromRGB(40, 255, 0), Color3.fromRGB(220, 255, 0), Color3.fromRGB(0, 145, 55)},
         ["Royal"] = {Color3.fromRGB(115, 0, 255), Color3.fromRGB(255, 210, 45), Color3.fromRGB(220, 0, 255)},
     }
+    -- Solid single colors for the name tag (tuned for vibrancy).
+    local SolidColors = {
+        White   = Color3.fromRGB(255, 255, 255),
+        Black   = Color3.fromRGB(35, 35, 35),
+        Gray    = Color3.fromRGB(180, 180, 180),
+        Red     = Color3.fromRGB(255, 45, 45),
+        Orange  = Color3.fromRGB(255, 150, 0),
+        Yellow  = Color3.fromRGB(255, 240, 0),
+        Green   = Color3.fromRGB(30, 230, 80),
+        Lime    = Color3.fromRGB(160, 255, 0),
+        Cyan    = Color3.fromRGB(0, 255, 240),
+        Blue    = Color3.fromRGB(45, 140, 255),
+        Navy    = Color3.fromRGB(35, 75, 200),
+        Purple  = Color3.fromRGB(185, 80, 255),
+        Pink    = Color3.fromRGB(255, 95, 185),
+        Magenta = Color3.fromRGB(255, 0, 175),
+        Gold    = Color3.fromRGB(255, 205, 50),
+        Silver  = Color3.fromRGB(215, 215, 230),
+        Brown   = Color3.fromRGB(165, 100, 50),
+    }
     local Fonts = {
         GothamBlack=Enum.Font.GothamBlack, GothamBold=Enum.Font.GothamBold,
         Arcade=Enum.Font.Arcade, SciFi=Enum.Font.SciFi, Cartoon=Enum.Font.Cartoon, Code=Enum.Font.Code,
@@ -7790,6 +7815,27 @@ task.spawn(function()
                         ColorSequenceKeypoint.new(0.48, Color3.fromRGB(255, 196, 70)),
                         ColorSequenceKeypoint.new(0.52, Color3.fromRGB(48, 217, 130)),
                         ColorSequenceKeypoint.new(1, Color3.fromRGB(48, 217, 130)),
+                    }
+                elseif style == "Solid Custom" then
+                    -- Single solid color from the prominent "Name Tag Color" picker.
+                    local c = current.TagColor or Color3.fromRGB(255, 140, 0)
+                    sequence = ColorSequence.new{
+                        ColorSequenceKeypoint.new(0, c),
+                        ColorSequenceKeypoint.new(1, c),
+                    }
+                elseif style == "Custom Color" then
+                    -- User-defined gradient between CustomColor1 and CustomColor2.
+                    -- Set both colors identical for a solid name tag.
+                    sequence = ColorSequence.new{
+                        ColorSequenceKeypoint.new(0, current.CustomColor1 or Color3.fromRGB(255, 196, 70)),
+                        ColorSequenceKeypoint.new(1, current.CustomColor2 or Color3.fromRGB(48, 217, 130)),
+                    }
+                elseif SolidColors[style] then
+                    -- A single solid color (White, Black, Orange, etc.).
+                    local c = SolidColors[style]
+                    sequence = ColorSequence.new{
+                        ColorSequenceKeypoint.new(0, c),
+                        ColorSequenceKeypoint.new(1, c),
                     }
                 else
                     local colors = Palettes[style] or Palettes["Miami Wave"]
