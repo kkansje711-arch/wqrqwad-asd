@@ -1,253 +1,51 @@
-local Aether = loadstring(game:HttpGet("https://raw.githubusercontent.com/NIcoGabrielRealYtr/Aether.lua-Library/refs/heads/main/Source"))()
+local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
+local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
+local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
+local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
 
-Options = getgenv().Options or {}
-Toggles = getgenv().Toggles or {}
+local Options = Library.Options
+local Toggles = Library.Toggles
 getgenv().Options = Options
 getgenv().Toggles = Toggles
+getgenv().Library = Library
 getgenv().MiamiSuppressNotifications = true
 
-local AetherWindow
-local Library = {Theme = {Accent = Color3.fromRGB(255, 140, 0)}}
-getgenv().Library = Library
+Library.ForceCheckbox = false
+Library.ShowToggleFrameInKeybinds = true
 
-local function parseKey(value)
-    if typeof(value) == "EnumItem" then return value end
-    local name = tostring(value or "RightShift"):gsub("Enum%.KeyCode%.", ""):gsub("Enum%.UserInputType%.", "")
-    return Enum.KeyCode[name] or Enum.UserInputType[name] or Enum.KeyCode.RightShift
-end
-
-local function makeControl(flag, default, callback, storage)
-    local control = {Flag = flag, Value = default, _callbacks = {}, _raw = nil, _callback = callback}
-    function control:_emit(value)
-        self.Value = value
-        if self._callback then pcall(self._callback, value) end
-        for _, fn in ipairs(self._callbacks) do pcall(fn, value) end
-    end
-    function control:OnChanged(fn)
-        if type(fn) == "function" then table.insert(self._callbacks, fn) end
-        return self
-    end
-    function control:SetValue(value)
-        if self._raw then
-            if self._raw.SetValue then pcall(function() self._raw:SetValue(value) end); return self end
-            if self._raw.Set then pcall(function() self._raw:Set(value) end); return self end
+-- Map the Miami preset buttons to Obsidian's native color registry.
+if not Library.ChangeTheme then
+    function Library:ChangeTheme(name, color)
+        local map = {
+            Background = "BackgroundColor",
+            Inline = "MainColor",
+            Outline = "OutlineColor",
+            Text = "FontColor",
+            ["Dark Text"] = "FontColor",
+            Element = "MainColor",
+            Accent = "AccentColor",
+        }
+        local key = map[name]
+        if key and self.Scheme then
+            self.Scheme[key] = color
+            if self.UpdateColorsUsingRegistry then self:UpdateColorsUsingRegistry() end
         end
-        self:_emit(value)
-        return self
     end
-    function control:SetValues(values)
-        self.Values = values or {}
-        if self._raw then
-            if self._raw.SetValues then pcall(function() self._raw:SetValues(self.Values) end)
-            elseif self._raw.Refresh then pcall(function() self._raw:Refresh(self.Values) end) end
-        end
-        return self
-    end
-    control.Refresh = control.SetValues
-    if flag then storage[flag] = control end
-    return control
 end
 
-local function wrapLabel(raw, section, text)
-    local label = {_raw = raw, _section = section, _text = tostring(text or "")}
-    function label:SetText(value)
-        self._text = tostring(value or "")
-        if self._raw then
-            if self._raw.SetText then pcall(function() self._raw:SetText(self._text) end)
-            elseif self._raw.Set then pcall(function() self._raw:Set(self._text) end) end
-        end
-        return self
+-- The Miami source targets the older manager method name.
+if not ThemeManager.ApplyToGroupbox then
+    function ThemeManager:ApplyToGroupbox()
+        -- Obsidian applies the active theme globally through its registry.
+        if Library.UpdateColorsUsingRegistry then Library:UpdateColorsUsingRegistry() end
     end
-    function label:AddKeyPicker(flag, data)
-        data = data or {}
-        local key = parseKey(data.Default or data.DefaultValue)
-        local control = makeControl(flag, key, data.Callback, Options)
-        if self._section.AddKeyPicker then
-            control._raw = self._section:AddKeyPicker({
-                Text = data.Text or tostring(flag), Flag = flag, Default = key,
-                Callback = function(value) control:_emit(value) end,
-            })
-        end
-        return control
-    end
-    return label
 end
-
-local function wrapGroup(section)
-    local group = {_section = section}
-
-    function group:AddLabel(text)
-        local raw
-        if self._section.AddLabel then
-            pcall(function() raw = self._section:AddLabel({Text = tostring(text or "")}) end)
-        end
-        return wrapLabel(raw, self._section, text)
-    end
-
-    function group:AddDivider()
-        return self:AddLabel("────────────────────────")
-    end
-
-    function group:AddButton(text, callback)
-        if type(text) == "table" then
-            local data = text
-            callback = data.Func or data.Callback
-            text = data.Text or data.Name or "Button"
-        end
-        return self._section:AddButton({
-            Text = tostring(text or "Button"),
-            Callback = function()
-                if type(callback) == "function" then
-                    local ok, err = pcall(callback)
-                    if not ok then warn("[Aether Button] " .. tostring(err)) end
-                end
-            end,
-        })
-    end
-
-    function group:AddToggle(flag, data)
-        data = data or {}
-        local control = makeControl(flag, data.Default == true, data.Callback, Toggles)
-        control._raw = self._section:AddToggle({
-            Text = data.Text or data.Name or tostring(flag), Flag = flag,
-            Default = data.Default == true,
-            Callback = function(value) control:_emit(value) end,
-        })
-        return control
-    end
-
-    function group:AddSlider(flag, data)
-        data = data or {}
-        local default = data.Default or data.Min or 0
-        local control = makeControl(flag, default, data.Callback, Options)
-        control._raw = self._section:AddSlider({
-            Text = data.Text or data.Name or tostring(flag), Flag = flag,
-            Min = data.Min or 0, Max = data.Max or 100, Default = default,
-            Suffix = data.Suffix or "", Decimals = data.Rounding or 0,
-            Callback = function(value) control:_emit(value) end,
-        })
-        return control
-    end
-
-    function group:AddDropdown(flag, data)
-        data = data or {}
-        local values = data.Values or data.Items or {}
-        local default = data.Default
-        if type(default) == "number" then default = values[default] end
-        if type(default) == "table" and not data.Multi then default = default[1] end
-        local control = makeControl(flag, default, data.Callback, Options)
-        control.Values = values
-        control._raw = self._section:AddDropdown({
-            Text = data.Text or data.Name or tostring(flag), Flag = flag,
-            Options = values, Default = default, Multi = data.Multi == true,
-            Callback = function(value) control:_emit(value) end,
-        })
-        return control
-    end
-
-    function group:AddInput(flag, data)
-        data = data or {}
-        local default = data.Default or ""
-        local control = makeControl(flag, default, data.Callback, Options)
-        control._raw = self._section:AddInput({
-            Text = data.Text or data.Name or tostring(flag), Flag = flag,
-            Default = default, Placeholder = data.Placeholder or "",
-            Numeric = data.Numeric == true, Finished = data.Finished == true,
-            Callback = function(value)
-                if data.Numeric then value = tonumber(value) or value end
-                control:_emit(value)
-            end,
-        })
-        return control
-    end
-
-    return group
-end
-
-local function wrapTab(page)
-    local tab = {_page = page}
-    function tab:AddLeftGroupbox(name)
-        return wrapGroup(self._page:AddSection({Title = tostring(name or "Group"), Side = "Left"}))
-    end
-    function tab:AddRightGroupbox(name)
-        return wrapGroup(self._page:AddSection({Title = tostring(name or "Group"), Side = "Right"}))
-    end
-    return tab
-end
-
-function Library:CreateWindow(data)
-    data = data or {}
-    AetherWindow = Aether:CreateWindow({
-        Title = "Miami TB3",
-        SubText = "OregonScripts | Premium User",
-        Size = UDim2.fromOffset(900, 700),
-        Image = "rbxassetid://95259225424429",
-        IsMobile = true,
-    })
-    local window = {Tabs = {}}
-    local icons = {
-        Player = "rbxassetid://7734053426", Main = "rbxassetid://7734053426",
-        Farm = "rbxassetid://7734053426", Visuals = "rbxassetid://7734053426",
-        Safe = "rbxassetid://7734053426", Settings = "rbxassetid://7734053426",
-    }
-    function window:AddTab(name)
-        local tabName = tostring(name or "Tab")
-        local page = AetherWindow:AddTab({Text = tabName, Icon = icons[tabName] or "rbxassetid://7734053426"})
-        local wrapped = wrapTab(page)
-        self.Tabs[tabName] = wrapped
-        return wrapped
-    end
-    function window:SetOpen(value)
-        pcall(function()
-            if Aether.Window and Aether.Window.Items and Aether.Window.Items.Menu then
-                Aether.Window.Items.Menu.Instance.Visible = value
-            end
-        end)
-    end
-    Library.__CompatActiveWindow = window
-    return window
-end
-
-function Library:Notify(message, duration)
-    if getgenv().MiamiSuppressNotifications then return end
-    pcall(function() Aether:Notify({Title = "Miami TB3 - " .. tostring(message), Lifetime = tonumber(duration) or 4}) end)
-end
-Library.Notification = Library.Notify
-
-function Library.Toggle()
-    pcall(function()
-        if Aether.Window and Aether.Window.Items and Aether.Window.Items.Menu then
-            local menu = Aether.Window.Items.Menu.Instance
-            menu.Visible = not menu.Visible
-        end
-    end)
-end
-
-function Library:ChangeTheme(name, color)
-    self.Theme[name] = color
-end
-
-function Library:Unload()
-    pcall(function()
-        local mini = getgenv().MiamiMenuToggleGui
-        if mini then mini:Destroy() end
-    end)
-    if Aether and Aether.Unload then pcall(function() Aether:Unload() end) end
-end
-
-ThemeManager = {
-    BuiltInThemes = {}, SetLibrary = function() end, ApplyTheme = function() end,
-    SetFolder = function() end, ApplyToGroupbox = function() end,
-}
-SaveManager = {
-    SetLibrary = function() end, IgnoreThemeSettings = function() end,
-    SetIgnoreIndexes = function() end, SetFolder = function() end,
-    SetSubFolder = function() end, BuildConfigSection = function() end,
-}
-
 
 Window = Library:CreateWindow({
     Title = '🍊 <font color="rgb(255, 140, 0)">Miami</font> 🍀  |  [v2.20]  |  License: <font color="rgb(0, 220, 0)">Lifetime</font>  |  <font color="rgb(255, 140, 0)">Premium User</font>',
+    Footer = 'OregonScripts | Miami TB3',
+    Icon = 95816097006870,
+    NotifySide = 'Right',
     Center = true,
     AutoShow = true,
     TabPadding = 6,
