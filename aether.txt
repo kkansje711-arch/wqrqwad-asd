@@ -42,8 +42,8 @@ if not ThemeManager.ApplyToGroupbox then
 end
 
 Window = Library:CreateWindow({
-    Title = '🍊 <font color="rgb(255, 140, 0)">Miami</font> 🍀  |  [v2.20]  |  License: <font color="rgb(0, 220, 0)">Lifetime</font>  |  <font color="rgb(255, 140, 0)">Premium User</font>',
-    Footer = 'OregonScripts | Miami TB3',
+    Title = '',
+    Footer = '🏆 TrophyScripts • Obsidian Edition • discord.gg/trophyscripts',
     Icon = 95816097006870,
     NotifySide = 'Right',
     Center = true,
@@ -61,26 +61,27 @@ else
     Library:Notify("Error\nFailed to load ESP Menu.", 3)
 end
 
--- Tab Configuration
+-- Tab Configuration (TrophyScripts Obsidian Edition — distinct layout)
 Tabs = {
-    Player = Window:AddTab('Player'),
-    Main = Window:AddTab('Main'),
-    Autofarm = Window:AddTab('Farm'),
-    Visuals = Window:AddTab('Visuals'),
-    ["Safe/Dupe"] = Window:AddTab('Safe'),
-    Settings = Window:AddTab('Settings'),
+    Player = Window:AddTab('👤 Profile'),
+    Main = Window:AddTab('🎯 Action'),
+    Combat = Window:AddTab('🔫 Arsenal'),
+    Autofarm = Window:AddTab('🌾 Hustle'),
+    Visuals = Window:AddTab('👁️ Vision'),
+    ["Safe/Dupe"] = Window:AddTab('💎 Vault'),
+    Settings = Window:AddTab('⚙️ Settings'),
 }
 
-MiamiBrandGroup = Tabs.Player:AddLeftGroupbox("🍊 Miami 🍀")
-MiamiBrandGroup:AddLabel("Script: Miami")
-MiamiBrandGroup:AddLabel("Discord: discord.gg/oregonnscripts")
+MiamiBrandGroup = Tabs.Player:AddLeftGroupbox("🏆 TrophyScripts 🍀")
+MiamiBrandGroup:AddLabel("Script: TrophyScripts — Obsidian Edition")
+MiamiBrandGroup:AddLabel("Discord: discord.gg/trophyscripts")
 MiamiBrandGroup:AddButton("📋 Copy Discord", function()
-    if setclipboard then setclipboard("https://discord.gg/oregonnscripts") end
-    Library:Notify("🍊 Miami\nCopied discord.gg/oregonnscripts", 4)
+    if setclipboard then setclipboard("https://discord.gg/trophyscripts") end
+    Library:Notify("🏆 TrophyScripts\nCopied discord.gg/trophyscripts", 4)
 end)
 MiamiBrandGroup:AddButton("✅ Test Button", function()
     getgenv().MiamiSuppressNotifications = false
-    Library:Notify("Sament buttons are responding", 4)
+    Library:Notify("TrophyScripts buttons are responding", 4)
 end)
 
 ------------------------------------------------------------
@@ -101,15 +102,15 @@ Debris           = game:GetService("Debris")
 flags = {}
 
 MimaiUI = {
-    Accent = Color3.fromRGB(255, 140, 0),
-    AccentSoft = Color3.fromRGB(61, 255, 138),
-    Background = Color3.fromRGB(10, 10, 10),
-    Panel = Color3.fromRGB(22, 22, 22),
-    PanelSoft = Color3.fromRGB(28, 28, 28),
-    Outline = Color3.fromRGB(42, 42, 42),
-    Text = Color3.fromRGB(245, 245, 245),
-    Muted = Color3.fromRGB(170, 170, 170),
-    WatermarkStatus = "Loaded 🍀",
+    Accent = Color3.fromRGB(255, 196, 70),
+    AccentSoft = Color3.fromRGB(48, 217, 130),
+    Background = Color3.fromRGB(9, 11, 18),
+    Panel = Color3.fromRGB(16, 19, 28),
+    PanelSoft = Color3.fromRGB(22, 26, 36),
+    Outline = Color3.fromRGB(36, 42, 56),
+    Text = Color3.fromRGB(237, 240, 248),
+    Muted = Color3.fromRGB(150, 158, 175),
+    WatermarkStatus = "Loaded 🏆",
     WatermarkKey = "RightShift",
     FPS = 0,
     Ping = "?",
@@ -179,8 +180,9 @@ function ensureMimaiVisualLayer()
     local watermark = Instance.new("Frame")
     watermark.Name = "Watermark"
     watermark.Position = UDim2.new(0, 16, 0, 18)
-    watermark.Size = UDim2.fromOffset(520, 30)
+    watermark.Size = UDim2.fromOffset(760, 30)
     watermark.BackgroundColor3 = MimaiUI.Panel
+    watermark.ClipsDescendants = true
     watermark.BackgroundTransparency = 0.08
     watermark.BorderSizePixel = 0
     watermark.ZIndex = 5
@@ -209,7 +211,7 @@ function ensureMimaiVisualLayer()
     watermarkText.Position = UDim2.new(0, 18, 0, 0)
     watermarkText.Size = UDim2.new(1, -28, 1, 0)
     watermarkText.Font = Enum.Font.GothamSemibold
-    watermarkText.TextSize = 13
+    watermarkText.TextSize = 12
     watermarkText.TextXAlignment = Enum.TextXAlignment.Left
     watermarkText.RichText = true
     watermarkText.TextColor3 = MimaiUI.Text
@@ -250,7 +252,7 @@ function updateWatermarkText()
     ensureMimaiVisualLayer()
     if not MimaiUI.WatermarkLabel then return end
     MimaiUI.WatermarkLabel.Text = string.format(
-        '🍊 <font color="#ff8c00">Miami</font>  •  <font color="#3dff8a">discord.gg/oregonnscripts</font>  •  <font color="#f5f5f5">%s</font>  •  <font color="#9f9f9f">%s</font>  •  <font color="#3dff8a">%s FPS</font>  •  <font color="#ff8c00">%sms</font>  •  <font color="#9f9f9f">%s</font>',
+        '🏆 <font color="#ffc446">TrophyScripts</font>  •  <font color="#30d982">discord.gg/trophyscripts</font>  •  <font color="#edf0f8">%s</font>  •  <font color="#969eaf">%s</font>  •  <font color="#30d982">%s FPS</font>  •  <font color="#ffc446">%sms</font>  •  <font color="#969eaf">%s</font>',
         tostring(MimaiUI.WatermarkStatus or "Loaded"),
         tostring(MimaiUI.WatermarkKey or "RightShift"),
         tostring(MimaiUI.FPS or 0),
@@ -318,7 +320,7 @@ function playMimaiLoadSplash()
     splashTitle.Font = Enum.Font.GothamBlack
     splashTitle.TextSize = 22
     splashTitle.RichText = true
-    splashTitle.Text = '🍊 <font color="#ff8c00">Miami</font> 🍀'
+    splashTitle.Text = '🏆 <font color="#ffc446">TrophyScripts</font> <font color="#30d982">🍀</font>'
     splashTitle.TextColor3 = MimaiUI.Text
     splashTitle.ZIndex = 51
     splashTitle.Parent = splash
@@ -329,7 +331,7 @@ function playMimaiLoadSplash()
     splashSub.Size = UDim2.new(1, 0, 0, 20)
     splashSub.Font = Enum.Font.GothamSemibold
     splashSub.TextSize = 12
-    splashSub.Text = 'discord.gg/oregonnscripts • Miami edition'
+    splashSub.Text = 'discord.gg/trophyscripts'
     splashSub.TextColor3 = MimaiUI.Muted
     splashSub.ZIndex = 51
     splashSub.Parent = splash
@@ -426,7 +428,7 @@ function createNotificationCard(title, body, duration)
     titleLabel.Font = Enum.Font.GothamBold
     titleLabel.TextSize = 13
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.Text = tostring(title or "🍊 Miami")
+    titleLabel.Text = tostring(title or "🏆 TrophyScripts")
     titleLabel.TextColor3 = MimaiUI.Text
     titleLabel.ZIndex = 22
     titleLabel.Parent = card
@@ -468,7 +470,7 @@ function sendNotification(title, text, duration)
     pcall(createNotificationCard, title, text, duration)
     pcall(function()
         StarterGui:SetCore("SendNotification", {
-            Title = tostring(title or "🍊 Miami"),
+            Title = tostring(title or "🏆 TrophyScripts"),
             Text = tostring(text or ""),
             Duration = duration or 5,
         })
@@ -4933,7 +4935,7 @@ end
 ------------------------------------------------------------
 
 -- Left Side Groups
-BlueGunModsSection = Tabs.Player:AddLeftGroupbox("🍊 Weapon Modifications")
+BlueGunModsSection = Tabs.Combat:AddLeftGroupbox("🔫 Weapon Modifications")
 
 function bindToggle(displayName, key, flag)
     BlueGunModsSection:AddToggle(flag, {
@@ -5031,7 +5033,7 @@ GonModsSection:AddToggle("GonRainbowBullet", {
 
 
 -- Right Side Groups
-BlueGunSettingsSection = Tabs.Player:AddRightGroupbox("🍀 Weapon Settings")
+BlueGunSettingsSection = Tabs.Combat:AddRightGroupbox("🍀 Weapon Settings")
 BlueGunSettingsSection:AddLabel("100% is default percentage.")
 BlueGunSettingsSection:AddSlider("BlueWM_FireRatePercent", {
     Text = "Fire-Rate Percentage",
@@ -5060,7 +5062,7 @@ BlueGunSettingsSection:AddSlider("BlueWM_EquipSpeed", {
 })
 
 
-BlueGunColorSection = Tabs.Player:AddRightGroupbox("🎨 Gun Color")
+BlueGunColorSection = Tabs.Combat:AddRightGroupbox("🎨 Gun Color")
 BlueGunColorSection:AddToggle("BlueWM_GunColor", {
     Text = "Enable Gun Color",
     Default = false,
@@ -5776,7 +5778,7 @@ BronxCustomOutfitGroup:AddButton("♻️ Reset Clothing", function()
     sendNotification("Outfit", "Clothing reset!")
 end)
 
-BankATMGroup = Tabs.Main:AddRightGroupbox("🏦 Bank / ATM")
+BankATMGroup = Tabs["Safe/Dupe"]:AddRightGroupbox("🏦 Bank / ATM")
 function getBankValue()
     local ok, v = pcall(function() return LocalPlayer.stored.Bank.Value end)
     if ok then return v end; return 0
@@ -5872,7 +5874,7 @@ BankATMGroup:AddToggle("BoxHubAutoWithdraw", {
 })
 
 
-VehicleGroup = Tabs.Main:AddRightGroupbox("🚗 Vehicle Settings")
+VehicleGroup = Tabs.Player:AddRightGroupbox("🚗 Vehicle Settings")
 VehicleGroup:AddToggle("CarFlyEnabled", {
     Text = "Car Fly",
     Default = false,
@@ -7305,13 +7307,13 @@ do
 -- ==========================================
 -- SETTINGS / UI SETTINGS TAB
 -- ==========================================
-MenuGroup = Tabs.Settings:AddLeftGroupbox("🍊 Menu Settings")
+MenuGroup = Tabs.Settings:AddLeftGroupbox("🏆 Menu Settings")
 
-MenuGroup:AddLabel("🍊 Script: Miami", true)
-MenuGroup:AddLabel("🍀 Discord: discord.gg/oregonnscripts", true)
+MenuGroup:AddLabel("🏆 Script: TrophyScripts — Obsidian Edition", true)
+MenuGroup:AddLabel("🍀 Discord: discord.gg/trophyscripts", true)
 MenuGroup:AddLabel("Game: THA BRONX 3🐍", true)
 MenuGroup:AddLabel("Developed By EL FULLY", true)
-MenuGroup:AddLabel("Status: Premium Visuals Loaded ✓", true)
+MenuGroup:AddLabel("Status: Obsidian Edition Loaded ✓", true)
 MenuGroup:AddDivider()
 
 MenuGroup:AddLabel("Menu bind")
@@ -7355,7 +7357,7 @@ end)
 MenuGroup:AddButton({
     Text = 'Copy Discord',
     Func = function()
-       setclipboard("https://discord.gg/oregonnscripts")
+       setclipboard("https://discord.gg/trophyscripts")
        Library:Notify("Copied Discord to clipboard", 10)
     end,
 })
@@ -7367,7 +7369,7 @@ getgenv().MiamiHeadTagSettings = getgenv().MiamiHeadTagSettings or {}
 local HeadTagSettings = getgenv().MiamiHeadTagSettings
 if HeadTagSettings.StyleVersion ~= 3 then
     HeadTagSettings.Enabled = HeadTagSettings.Enabled ~= false
-    HeadTagSettings.Text = HeadTagSettings.Text or "discord.gg/oregonnscripts"
+    HeadTagSettings.Text = HeadTagSettings.Text or "discord.gg/trophyscripts"
     HeadTagSettings.Size = 32
     HeadTagSettings.Height = 3.4
     HeadTagSettings.Style = "Miami Split"
@@ -7392,7 +7394,7 @@ HeadTagGroup:AddInput("MiamiHeadTagText", {
     Text = "Text", Default = HeadTagSettings.Text, Placeholder = "Text above your head",
     Numeric = false, Finished = true,
     Callback = function(value)
-        HeadTagSettings.Text = tostring(value or "") ~= "" and tostring(value) or "discord.gg/oregonnscripts"
+        HeadTagSettings.Text = tostring(value or "") ~= "" and tostring(value) or "discord.gg/trophyscripts"
     end
 })
 HeadTagGroup:AddDropdown("MiamiHeadTagStyle", {
@@ -7447,6 +7449,19 @@ function ApplyMiamiThemePreset(name, colors)
     end
     sendNotification("Theme", "Applied " .. tostring(name), 2)
 end
+
+ThemePresetGroup:AddButton("🏆 Trophy Obsidian", function()
+    ApplyMiamiThemePreset("Trophy Obsidian", {
+        Background = Color3.fromRGB(9, 11, 18),
+        Inline = Color3.fromRGB(16, 19, 28),
+        Outline = Color3.fromRGB(36, 42, 56),
+        Element = Color3.fromRGB(22, 26, 36),
+        Text = Color3.fromRGB(237, 240, 248),
+        DarkText = Color3.fromRGB(150, 158, 175),
+        Accent = Color3.fromRGB(255, 196, 70),
+        AccentSoft = Color3.fromRGB(48, 217, 130),
+    })
+end)
 
 ThemePresetGroup:AddButton("🍊 Miami Classic", function()
     ApplyMiamiThemePreset("Miami Classic", {
@@ -7607,7 +7622,7 @@ task.defer(function()
         corner.Parent = toggleBtn
 
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(255, 140, 0)
+        stroke.Color = Color3.fromRGB(255, 196, 70)
         stroke.Thickness = 2
         stroke.Parent = toggleBtn
 
@@ -7618,9 +7633,9 @@ task.defer(function()
         icon.Position = UDim2.new(0.5, 0, 0.5, -6)
         icon.Size = UDim2.new(0, 30, 0, 30)
         icon.Font = Enum.Font.GothamBlack
-        icon.Text = "M"
+        icon.Text = "🏆"
         icon.TextSize = 22
-        icon.TextColor3 = Color3.fromRGB(255, 140, 0)
+        icon.TextColor3 = Color3.fromRGB(255, 196, 70)
         icon.ZIndex = 100000
 
         local label = Instance.new("TextLabel")
@@ -7631,7 +7646,7 @@ task.defer(function()
         label.Font = Enum.Font.GothamBold
         label.Text = "MENU"
         label.TextSize = 11
-        label.TextColor3 = Color3.fromRGB(255, 140, 0)
+        label.TextColor3 = Color3.fromRGB(255, 196, 70)
         label.ZIndex = 100000
 
         local dragging = false
@@ -7658,12 +7673,12 @@ task.defer(function()
                 local isOpen = Window and Window.Holder and Window.Holder.Visible
                 pcall(function()
                     TweenService:Create(stroke, TweenInfo.new(0.2), {
-                        Color = isOpen and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(85, 85, 85),
+                        Color = isOpen and Color3.fromRGB(255, 196, 70) or Color3.fromRGB(85, 85, 85),
                         Thickness = isOpen and 2 or 1.5,
                     }):Play()
                 end)
-                icon.TextColor3 = isOpen and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(180, 180, 180)
-                label.TextColor3 = isOpen and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(180, 180, 180)
+                icon.TextColor3 = isOpen and Color3.fromRGB(255, 196, 70) or Color3.fromRGB(180, 180, 180)
+                label.TextColor3 = isOpen and Color3.fromRGB(255, 196, 70) or Color3.fromRGB(180, 180, 180)
                 label.Text = isOpen and "CLOSE" or "MENU"
             end
         end)
@@ -7702,7 +7717,7 @@ end)
 
 task.spawn(function()
     local Palettes = {
-        ["Miami Wave"] = {Color3.fromRGB(255, 105, 20), Color3.fromRGB(255, 175, 65), Color3.fromRGB(0, 210, 95)},
+        ["Miami Wave"] = {Color3.fromRGB(255, 196, 70), Color3.fromRGB(255, 225, 150), Color3.fromRGB(48, 217, 130)},
         ["Fire"] = {Color3.fromRGB(255, 30, 0), Color3.fromRGB(255, 225, 0), Color3.fromRGB(255, 80, 0)},
         ["Ice"] = {Color3.fromRGB(0, 125, 255), Color3.fromRGB(245, 255, 255), Color3.fromRGB(0, 255, 235)},
         ["Toxic"] = {Color3.fromRGB(40, 255, 0), Color3.fromRGB(220, 255, 0), Color3.fromRGB(0, 145, 55)},
@@ -7754,7 +7769,7 @@ task.spawn(function()
             local timeValue = 0
             while label.Parent do
                 local current = getgenv().MiamiHeadTagSettings or {}
-                local text = tostring(current.Text or "discord.gg/oregonnscripts")
+                local text = tostring(current.Text or "discord.gg/trophyscripts")
                 local size = tonumber(current.Size) or 32
                 local speed = tonumber(current.Speed) or 8
                 local style = current.Style or "Miami Split"
@@ -7769,12 +7784,12 @@ task.spawn(function()
                         ColorSequenceKeypoint.new(1, Color3.fromHSV((hue + 0.5) % 1, 1, 1)),
                     }
                 elseif style == "Miami Split" then
-                    -- Sharp half-orange / half-green split requested by user.
+                    -- Sharp half-gold / half-emerald split (Trophy Obsidian).
                     sequence = ColorSequence.new{
-                        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 105, 20)),
-                        ColorSequenceKeypoint.new(0.48, Color3.fromRGB(255, 105, 20)),
-                        ColorSequenceKeypoint.new(0.52, Color3.fromRGB(0, 220, 100)),
-                        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 220, 100)),
+                        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 196, 70)),
+                        ColorSequenceKeypoint.new(0.48, Color3.fromRGB(255, 196, 70)),
+                        ColorSequenceKeypoint.new(0.52, Color3.fromRGB(48, 217, 130)),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(48, 217, 130)),
                     }
                 else
                     local colors = Palettes[style] or Palettes["Miami Wave"]
@@ -7819,28 +7834,28 @@ task.defer(function()
             currentKey = tostring(Options.MenuKeybind.Value)
         end
     end)
-    setWatermarkState("Loaded 🍀", currentKey)
+    setWatermarkState("Loaded 🏆", currentKey)
 end)
 
 -- ==========================================
--- MIMAI THEME OVERRIDE (ORIGINAL GREY STYLE)
+-- TROPHY OBSIDIAN THEME OVERRIDE (GOLD ON NAVY-OBSIDIAN)
 -- ==========================================
 ThemeManager:SetLibrary(Library)
 
--- Define the custom Mimai theme
-ThemeManager.BuiltInThemes["Mimai"] = {
+-- Define the custom Trophy Obsidian theme
+ThemeManager.BuiltInThemes["TrophyObsidian"] = {
     1,
     {
-        FontColor = "f5f5f5",
-        MainColor = "1a1a1a", -- Refined dark panel color
-        BackgroundColor = "101010", -- Deep graphite background canvas
-        AccentColor = "ff8c00", -- Orange accent
-        OutlineColor = "2a2a2a" -- Soft charcoal outline
+        FontColor = "edf0f8",
+        MainColor = "13141f",     -- Navy-obsidian panel
+        BackgroundColor = "090b12", -- Deep obsidian canvas
+        AccentColor = "ffc446",   -- Trophy gold accent
+        OutlineColor = "242a38"   -- Cool slate outline
     }
 }
 
 -- Set as active theme
-ThemeManager:ApplyTheme("Mimai")
+ThemeManager:ApplyTheme("TrophyObsidian")
 
 SaveManager:SetLibrary(Library)
 SaveManager:IgnoreThemeSettings()
