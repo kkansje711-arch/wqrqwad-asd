@@ -1,88 +1,334 @@
-local repo = "https://raw.githubusercontent.com/deividcomsono/Obsidian/main/"
-local Library = loadstring(game:HttpGet(repo .. "Library.lua"))()
-local ThemeManager = loadstring(game:HttpGet(repo .. "addons/ThemeManager.lua"))()
-local SaveManager = loadstring(game:HttpGet(repo .. "addons/SaveManager.lua"))()
+-- Miami TB3 - Full Aether UI port
+-- TrophyScripts startup loading screen
+local function ShowTrophyScriptsLoader()
+    local TweenService = game:GetService("TweenService")
+    local CoreGui = game:GetService("CoreGui")
+    local parent = (gethui and gethui()) or CoreGui
 
-local Options = Library.Options
-local Toggles = Library.Toggles
-getgenv().Options = Options
-getgenv().Toggles = Toggles
-getgenv().Library = Library
-getgenv().MiamiSuppressNotifications = true
+    pcall(function()
+        local old = parent:FindFirstChild("TrophyScriptsLoader")
+        if old then old:Destroy() end
+    end)
 
-Library.ForceCheckbox = false
-Library.ShowToggleFrameInKeybinds = true
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "TrophyScriptsLoader"
+    gui.IgnoreGuiInset = true
+    gui.ResetOnSpawn = false
+    gui.DisplayOrder = 1000000
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    gui.Parent = parent
 
--- Map the Miami preset buttons to Obsidian's native color registry.
-if not Library.ChangeTheme then
-    function Library:ChangeTheme(name, color)
-        local map = {
-            Background = "BackgroundColor",
-            Inline = "MainColor",
-            Outline = "OutlineColor",
-            Text = "FontColor",
-            ["Dark Text"] = "FontColor",
-            Element = "MainColor",
-            Accent = "AccentColor",
-        }
-        local key = map[name]
-        if key and self.Scheme then
-            self.Scheme[key] = color
-            if self.UpdateColorsUsingRegistry then self:UpdateColorsUsingRegistry() end
+    local shade = Instance.new("Frame")
+    shade.Size = UDim2.fromScale(1, 1)
+    shade.BackgroundColor3 = Color3.fromRGB(3, 4, 10)
+    shade.BackgroundTransparency = 1
+    shade.BorderSizePixel = 0
+    shade.Parent = gui
+
+    local card = Instance.new("Frame")
+    card.AnchorPoint = Vector2.new(0.5, 0.5)
+    card.Position = UDim2.fromScale(0.5, 0.54)
+    card.Size = UDim2.fromOffset(460, 220)
+    card.BackgroundColor3 = Color3.fromRGB(12, 15, 29)
+    card.BackgroundTransparency = 1
+    card.BorderSizePixel = 0
+    card.Parent = shade
+    Instance.new("UICorner", card).CornerRadius = UDim.new(0, 18)
+
+    local stroke = Instance.new("UIStroke")
+    stroke.Color = Color3.fromRGB(255, 200, 61)
+    stroke.Thickness = 2
+    stroke.Transparency = 1
+    stroke.Parent = card
+
+    local glow = Instance.new("Frame")
+    glow.AnchorPoint = Vector2.new(0.5, 0.5)
+    glow.Position = UDim2.fromScale(0.5, 0.5)
+    glow.Size = UDim2.new(1, 22, 1, 22)
+    glow.BackgroundColor3 = Color3.fromRGB(139, 92, 246)
+    glow.BackgroundTransparency = 1
+    glow.BorderSizePixel = 0
+    glow.ZIndex = -1
+    glow.Parent = card
+    Instance.new("UICorner", glow).CornerRadius = UDim.new(0, 24)
+
+    local trophy = Instance.new("TextLabel")
+    trophy.BackgroundTransparency = 1
+    trophy.Position = UDim2.fromOffset(0, 20)
+    trophy.Size = UDim2.new(1, 0, 0, 52)
+    trophy.Font = Enum.Font.GothamBlack
+    trophy.Text = "🏆"
+    trophy.TextSize = 43
+    trophy.TextTransparency = 1
+    trophy.Parent = card
+
+    local title = Instance.new("TextLabel")
+    title.BackgroundTransparency = 1
+    title.Position = UDim2.fromOffset(20, 72)
+    title.Size = UDim2.new(1, -40, 0, 36)
+    title.Font = Enum.Font.GothamBlack
+    title.RichText = true
+    title.Text = '<font color="#ffc83d">TROPHY</font><font color="#f7f3ff">SCRIPTS</font>'
+    title.TextSize = 29
+    title.TextTransparency = 1
+    title.Parent = card
+
+    local status = Instance.new("TextLabel")
+    status.BackgroundTransparency = 1
+    status.Position = UDim2.fromOffset(20, 110)
+    status.Size = UDim2.new(1, -40, 0, 25)
+    status.Font = Enum.Font.GothamMedium
+    status.Text = "Loading TB3 features..."
+    status.TextColor3 = Color3.fromRGB(175, 170, 205)
+    status.TextSize = 14
+    status.TextTransparency = 1
+    status.Parent = card
+
+    local track = Instance.new("Frame")
+    track.Position = UDim2.new(0, 38, 1, -52)
+    track.Size = UDim2.new(1, -76, 0, 7)
+    track.BackgroundColor3 = Color3.fromRGB(34, 38, 61)
+    track.BackgroundTransparency = 1
+    track.BorderSizePixel = 0
+    track.Parent = card
+    Instance.new("UICorner", track).CornerRadius = UDim.new(1, 0)
+
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.fromScale(0, 1)
+    fill.BackgroundColor3 = Color3.fromRGB(255, 200, 61)
+    fill.BorderSizePixel = 0
+    fill.Parent = track
+    Instance.new("UICorner", fill).CornerRadius = UDim.new(1, 0)
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new(Color3.fromRGB(139, 92, 246), Color3.fromRGB(255, 200, 61))
+    gradient.Parent = fill
+
+    TweenService:Create(shade, TweenInfo.new(0.35), {BackgroundTransparency = 0.18}):Play()
+    TweenService:Create(card, TweenInfo.new(0.5, Enum.EasingStyle.Back), {Position = UDim2.fromScale(0.5, 0.5), BackgroundTransparency = 0.04}):Play()
+    TweenService:Create(stroke, TweenInfo.new(0.5), {Transparency = 0.1}):Play()
+    TweenService:Create(glow, TweenInfo.new(0.5), {BackgroundTransparency = 0.86}):Play()
+    TweenService:Create(trophy, TweenInfo.new(0.4), {TextTransparency = 0}):Play()
+    TweenService:Create(title, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+    TweenService:Create(status, TweenInfo.new(0.5), {TextTransparency = 0}):Play()
+    TweenService:Create(track, TweenInfo.new(0.5), {BackgroundTransparency = 0}):Play()
+    TweenService:Create(fill, TweenInfo.new(2.8, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = UDim2.fromScale(1, 1)}):Play()
+
+    task.spawn(function()
+        local pulse = 0
+        while gui.Parent do
+            pulse = pulse + 0.04
+            gradient.Offset = Vector2.new(math.sin(pulse) * 0.35, 0)
+            stroke.Color = Color3.fromRGB(210 + math.floor(math.sin(pulse) * 35), 165, 90 + math.floor(math.cos(pulse) * 40))
+            task.wait(0.03)
         end
-    end
+    end)
+
+    task.delay(3, function()
+        if not gui.Parent then return end
+        status.Text = "TrophyScripts Loaded!"
+        status.TextColor3 = Color3.fromRGB(255, 220, 105)
+        trophy.Text = "🏆 ✓"
+        TweenService:Create(card, TweenInfo.new(0.18, Enum.EasingStyle.Back), {Size = UDim2.fromOffset(474, 226)}):Play()
+        task.wait(1.15)
+        TweenService:Create(card, TweenInfo.new(0.45, Enum.EasingStyle.Quart, Enum.EasingDirection.In), {Position = UDim2.fromScale(0.5, 0.45), BackgroundTransparency = 1}):Play()
+        TweenService:Create(shade, TweenInfo.new(0.45), {BackgroundTransparency = 1}):Play()
+        for _, item in ipairs(card:GetDescendants()) do
+            pcall(function()
+                if item:IsA("TextLabel") then TweenService:Create(item, TweenInfo.new(0.35), {TextTransparency = 1}):Play() end
+                if item:IsA("Frame") then TweenService:Create(item, TweenInfo.new(0.35), {BackgroundTransparency = 1}):Play() end
+                if item:IsA("UIStroke") then TweenService:Create(item, TweenInfo.new(0.35), {Transparency = 1}):Play() end
+            end)
+        end
+        task.wait(0.5)
+        gui:Destroy()
+    end)
 end
 
--- The Miami source targets the older manager method name.
-if not ThemeManager.ApplyToGroupbox then
-    function ThemeManager:ApplyToGroupbox()
-        -- Obsidian applies the active theme globally through its registry.
-        if Library.UpdateColorsUsingRegistry then Library:UpdateColorsUsingRegistry() end
-    end
-end
+pcall(ShowTrophyScriptsLoader)
 
-Window = Library:CreateWindow({
-    Title = '',
-    Footer = '🏆 TrophyScripts • Obsidian Edition • discord.gg/trophyscripts',
-    Icon = 10747363809,
-    NotifySide = 'Right',
-    Center = true,
-    AutoShow = true,
-    TabPadding = 6,
-    MenuFadeTime = 0.15
+-- Remove head tags left behind by older script executions before creating ours.
+pcall(function()
+    local oldControl = getgenv().MiamiHeadTagControl
+    if oldControl and oldControl.Destroy then oldControl.Destroy() end
+end)
+pcall(function()
+    for _, object in ipairs(game:GetDescendants()) do
+        local remove = false
+        if object.Name == "Miami_DiscordTag"
+            or object.Name == "TrophyScriptsHeadTagGui"
+            or object.Name == "MiamiHeadTagGui"
+            or object.Name == "OregonHeadTag"
+            or object.Name == "Oregon_DiscordTag" then
+            remove = true
+        elseif (object:IsA("TextLabel") or object:IsA("TextButton")) then
+            local value = string.lower(tostring(object.Text or ""))
+            if string.find(value, "discord.gg/oregonnscripts", 1, true) then
+                local billboard = object:FindFirstAncestorWhichIsA("BillboardGui")
+                if billboard then
+                    billboard:Destroy()
+                else
+                    object:Destroy()
+                end
+            end
+        end
+        if remove and object.Parent then object:Destroy() end
+    end
+end)
+getgenv().MiamiHeadTagSettings = getgenv().MiamiHeadTagSettings or {}
+getgenv().MiamiHeadTagSettings.Enabled = true
+getgenv().MiamiHeadTagSettings.Text = "discord.gg/trophyscripts"
+
+local AetherLibrary = loadstring(game:HttpGet("https://raw.githubusercontent.com/NIcoGabrielRealYtr/Ather-Hub-Library/refs/heads/main/Source"))()
+-- White interface accent requested for TrophyScripts.
+pcall(function()
+    AetherLibrary:ChangeTheme("Accent Start", Color3.fromRGB(255, 255, 255))
+    AetherLibrary:ChangeTheme("Accent End", Color3.fromRGB(205, 205, 215))
+end)
+
+local AetherWindow = AetherLibrary:Window({
+    Name = '<font color="rgb(255, 255, 255)">TrophyScripts</font>',
+    Logo = "rbxassetid://133425623304338"
 })
 
--- Initialize ESP Menu interface
-SenseESPInterface = loadstring(game:HttpGet("https://raw.githubusercontent.com/boshyxd/rayfield/refs/heads/main/SenseSource.luau"))()
-if SenseESPInterface then
-    Library:Notify("[Miami] ESP Menu\nLoading ESP...\nESP Menu library loaded successfully!\nESP Menu Initialized!", 2)
-    SenseESPInterface.Load()
-else
-    Library:Notify("Error\nFailed to load ESP Menu.", 3)
+getgenv().MiamiSuppressNotifications = true
+-- Movement must always start OFF. Do not inherit state from an older run.
+getgenv().TrophyWalkSpeedEnabled = false
+getgenv().TrophyWalkSpeed = 16
+Options, Toggles = {}, {}
+local Library={ToggleKeybind=nil,_unloadCallbacks={},Unloaded=false}
+function Library:Notify(message,duration)
+    if getgenv().MiamiSuppressNotifications then return end
+    pcall(function() AetherWindow:Notify({Title="Miami",Description=tostring(message or "Notification"),Duration=tonumber(duration) or 4}) end)
+end
+function Library:OnUnload(fn) if type(fn)=="function" then table.insert(self._unloadCallbacks,fn) end end
+function Library:Unload() if self.Unloaded then return end; self.Unloaded=true; for _,fn in ipairs(self._unloadCallbacks) do pcall(fn) end end
+function Library:ChangeTheme() end
+function Library.Toggle() end
+local ThemeManager={BuiltInThemes={}}
+for _,n in ipairs({"SetLibrary","ApplyTheme","SetFolder","ApplyToGroupbox"}) do ThemeManager[n]=function() end end
+local SaveManager={}
+for _,n in ipairs({"SetLibrary","IgnoreThemeSettings","SetIgnoreIndexes","SetFolder","SetSubFolder","BuildConfigSection"}) do SaveManager[n]=function() end end
+
+local function makeControl(flag,default,cb,real)
+    local c={Value=default,Values={},Callback=cb,Instance=real}
+    function c:_fire(v) self.Value=v; if flag then Options[flag]=self; Toggles[flag]=self end end
+    function c:SetValue(v)
+        self:_fire(v)
+        local used=false
+        pcall(function() if real and real.Set then real:Set(v); used=true elseif real and real.SetValue then real:SetValue(v); used=true end end)
+        if not used and type(cb)=="function" then pcall(cb,v) end
+    end
+    function c:SetValues(v)
+        self.Values=v or {}
+        pcall(function() if real and real.Refresh then real:Refresh(self.Values) elseif real and real.SetItems then real:SetItems(self.Values) end end)
+    end
+    c.Refresh=c.SetValues; c:_fire(default); return c
 end
 
--- Tab Configuration (TrophyScripts Obsidian Edition — distinct layout)
-Tabs = {
-    Player = Window:AddTab('👤 Profile'),
-    Main = Window:AddTab('🎯 Action'),
-    Combat = Window:AddTab('🔫 Arsenal'),
-    Autofarm = Window:AddTab('🌾 Hustle'),
-    Visuals = Window:AddTab('👁️ Vision'),
-    ["Safe/Dupe"] = Window:AddTab('💎 Vault'),
-    Settings = Window:AddTab('⚙️ Settings'),
-}
+local function wrapLabel(real,text)
+    local c={Instance=real,Value=tostring(text or "")}
+    function c:SetText(v) self.Value=tostring(v or ""); pcall(function() if real.Set then real:Set(self.Value) elseif real.SetText then real:SetText(self.Value) end end) end
+    function c:AddKeyPicker(flag,data)
+        data=data or {}; local obj
+        pcall(function() obj=real:Keybind({Flag=flag,Default=Enum.KeyCode[data.Default or "RightShift"] or data.Default or Enum.KeyCode.RightShift,Mode=data.Mode or "Toggle",Callback=data.Callback}) end)
+        local k=makeControl(flag,data.Default or "RightShift",data.Callback,obj); Options[flag]=k; return k
+    end
+    return c
+end
 
-MiamiBrandGroup = Tabs.Player:AddLeftGroupbox("🏆 TrophyScripts 🍀")
-MiamiBrandGroup:AddLabel("Script: TrophyScripts — Obsidian Edition")
+local function wrapGroup(section)
+    local g={_section=section}
+    function g:AddLabel(text)
+        local obj=self._section:Label({Name=tostring(text or "")}); return wrapLabel(obj,text)
+    end
+    function g:AddDivider() return self:AddLabel("────────────────────────") end
+    function g:AddButton(textOrData,callback)
+        local text,fn=textOrData,callback
+        if type(textOrData)=="table" then text=textOrData.Text or textOrData.Name or "Button"; fn=textOrData.Func or textOrData.Callback end
+        return self._section:Button({Name=tostring(text or "Button"),Callback=function() if type(fn)=="function" then local ok,e=pcall(fn); if not ok then warn(e) end end end})
+    end
+    function g:AddToggle(flag,data)
+        data=data or {}; local cb=data.Callback; local c
+        local obj=self._section:Toggle({Name=data.Text or tostring(flag),Flag=flag,Default=data.Default==true,Callback=function(v) if c then c:_fire(v) end; if type(cb)=="function" then pcall(cb,v) end end})
+        c=makeControl(flag,data.Default==true,cb,obj); Toggles[flag]=c; return c
+    end
+    function g:AddSlider(flag,data)
+        data=data or {}
+        local cb=data.Callback
+        local def=data.Default or data.Min or 0
+        local rounding=tonumber(data.Rounding) or 0
+        local c
+        local function normalize(v)
+            v=tonumber(v) or def
+            local power=10^rounding
+            return math.floor(v*power+0.5)/power
+        end
+        -- Aether's integer-step slider path is broken. Its 0.01 path works,
+        -- so all sliders use that internally and are rounded before callbacks.
+        local obj
+        obj=self._section:Slider({
+            Name=data.Text or tostring(flag), Flag=flag, Default=def,
+            Min=data.Min or 0, Max=data.Max or 100, Decimals=0.01,
+            Suffix=data.Suffix or "",
+            Callback=function(v)
+                local value=normalize(v)
+                if c then c:_fire(value) end
+                -- Force Aether's value readout to remain visible and show the
+                -- rounded feature value rather than a blank/invalid number.
+                pcall(function()
+                    local valueItem=obj and obj.Items and obj.Items["Value"]
+                    local label=valueItem and (valueItem.Instance or valueItem)
+                    if label then
+                        label.Text=tostring(value)..tostring(data.Suffix or "")
+                        label.Visible=true
+                        label.TextTransparency=0
+                    end
+                end)
+                if type(cb)=="function" then pcall(cb,value) end
+            end
+        })
+        c=makeControl(flag,def,cb,obj)
+        Options[flag]=c
+        pcall(function()
+            local valueItem=obj and obj.Items and obj.Items["Value"]
+            local label=valueItem and (valueItem.Instance or valueItem)
+            if label then
+                label.Text=tostring(normalize(def))..tostring(data.Suffix or "")
+                label.Visible=true
+                label.TextTransparency=0
+            end
+        end)
+        return c
+    end
+    function g:AddDropdown(flag,data)
+        data=data or {}; local vals=data.Values or {}; local cb=data.Callback; local def=data.Default or vals[1]; local c
+        local obj=self._section:Dropdown({Name=data.Text or tostring(flag),Flag=flag,Items=vals,Default=def,Multi=data.Multi==true,Callback=function(v) if c then c:_fire(v) end; if type(cb)=="function" then pcall(cb,v) end end})
+        c=makeControl(flag,def,cb,obj); c.Values=vals; Options[flag]=c; return c
+    end
+    function g:AddInput(flag,data)
+        data=data or {}; local cb=data.Callback; local def=data.Default or ""; local c
+        local obj=self._section:Textbox({Name=data.Text or tostring(flag),Flag=flag,Default=def,Placeholder=data.Placeholder or "",Numeric=data.Numeric==true,Finished=data.Finished==true,Callback=function(v) if c then c:_fire(v) end; if type(cb)=="function" then pcall(cb,v) end end})
+        c=makeControl(flag,def,cb,obj); Options[flag]=c; return c
+    end
+    return g
+end
+
+local Window={Holder=nil,Tabs={}}
+function Window:AddTab(name)
+    local icons={Player="lucide:user",Main="lucide:house",Farm="lucide:badge-dollar-sign",Visuals="lucide:eye",Safe="lucide:lock-keyhole",Settings="lucide:settings"}
+    local page=AetherWindow:Page({Name=tostring(name),Description="TrophyScripts "..tostring(name),Icon=icons[name] or "lucide:circle",Search=true})
+    local sub=page:SubPage({Name=tostring(name),Icon=icons[name] or "lucide:circle",DisplayName=true})
+    local t={_sub=sub,_count=0}
+    function t:AddLeftGroupbox(n) self._count=self._count+1; return wrapGroup(self._sub:Section({Name=tostring(n),Side=1})) end
+    function t:AddRightGroupbox(n) self._count=self._count+1; return wrapGroup(self._sub:Section({Name=tostring(n),Side=2})) end
+    self.Tabs[name]=t; return t
+end
+function Window:SetOpen() end
+Tabs={Player=Window:AddTab("Player"),Main=Window:AddTab("Main"),Autofarm=Window:AddTab("Farm"),Visuals=Window:AddTab("Visuals"),["Safe/Dupe"]=Window:AddTab("Safe"),Settings=Window:AddTab("Settings")}
+MiamiBrandGroup=Tabs.Player:AddLeftGroupbox("Miami")
+MiamiBrandGroup:AddLabel("Script: TrophyScripts")
 MiamiBrandGroup:AddLabel("Discord: discord.gg/trophyscripts")
-MiamiBrandGroup:AddButton("📋 Copy Discord", function()
-    if setclipboard then setclipboard("https://discord.gg/trophyscripts") end
-    Library:Notify("🏆 TrophyScripts\nCopied discord.gg/trophyscripts", 4)
-end)
-MiamiBrandGroup:AddButton("✅ Test Button", function()
-    getgenv().MiamiSuppressNotifications = false
-    Library:Notify("TrophyScripts buttons are responding", 4)
-end)
+MiamiBrandGroup:AddButton("Copy Discord",function() if setclipboard then setclipboard("https://discord.gg/trophyscripts") end end)
 
 ------------------------------------------------------------
 --  SHARED SERVICES / HELPERS FOR MERGED LOGIC
@@ -102,15 +348,15 @@ Debris           = game:GetService("Debris")
 flags = {}
 
 MimaiUI = {
-    Accent = Color3.fromRGB(255, 196, 70),
-    AccentSoft = Color3.fromRGB(48, 217, 130),
-    Background = Color3.fromRGB(9, 11, 18),
-    Panel = Color3.fromRGB(16, 19, 28),
-    PanelSoft = Color3.fromRGB(22, 26, 36),
-    Outline = Color3.fromRGB(36, 42, 56),
-    Text = Color3.fromRGB(237, 240, 248),
-    Muted = Color3.fromRGB(150, 158, 175),
-    WatermarkStatus = "Loaded 🏆",
+    Accent = Color3.fromRGB(255, 140, 0),
+    AccentSoft = Color3.fromRGB(61, 255, 138),
+    Background = Color3.fromRGB(10, 10, 10),
+    Panel = Color3.fromRGB(22, 22, 22),
+    PanelSoft = Color3.fromRGB(28, 28, 28),
+    Outline = Color3.fromRGB(42, 42, 42),
+    Text = Color3.fromRGB(245, 245, 245),
+    Muted = Color3.fromRGB(170, 170, 170),
+    WatermarkStatus = "Loaded 🍀",
     WatermarkKey = "RightShift",
     FPS = 0,
     Ping = "?",
@@ -180,9 +426,8 @@ function ensureMimaiVisualLayer()
     local watermark = Instance.new("Frame")
     watermark.Name = "Watermark"
     watermark.Position = UDim2.new(0, 16, 0, 18)
-    watermark.Size = UDim2.fromOffset(760, 30)
+    watermark.Size = UDim2.fromOffset(520, 30)
     watermark.BackgroundColor3 = MimaiUI.Panel
-    watermark.ClipsDescendants = true
     watermark.BackgroundTransparency = 0.08
     watermark.BorderSizePixel = 0
     watermark.ZIndex = 5
@@ -211,7 +456,7 @@ function ensureMimaiVisualLayer()
     watermarkText.Position = UDim2.new(0, 18, 0, 0)
     watermarkText.Size = UDim2.new(1, -28, 1, 0)
     watermarkText.Font = Enum.Font.GothamSemibold
-    watermarkText.TextSize = 12
+    watermarkText.TextSize = 13
     watermarkText.TextXAlignment = Enum.TextXAlignment.Left
     watermarkText.RichText = true
     watermarkText.TextColor3 = MimaiUI.Text
@@ -252,7 +497,7 @@ function updateWatermarkText()
     ensureMimaiVisualLayer()
     if not MimaiUI.WatermarkLabel then return end
     MimaiUI.WatermarkLabel.Text = string.format(
-        '🏆 <font color="#ffc446">TrophyScripts</font>  •  <font color="#30d982">discord.gg/trophyscripts</font>  •  <font color="#edf0f8">%s</font>  •  <font color="#969eaf">%s</font>  •  <font color="#30d982">%s FPS</font>  •  <font color="#ffc446">%sms</font>  •  <font color="#969eaf">%s</font>',
+        '🏆 <font color="#ffc83d">TrophyScripts</font>  •  <font color="#3dff8a">discord.gg/trophyscripts</font>  •  <font color="#f5f5f5">%s</font>  •  <font color="#9f9f9f">%s</font>  •  <font color="#3dff8a">%s FPS</font>  •  <font color="#ff8c00">%sms</font>  •  <font color="#9f9f9f">%s</font>',
         tostring(MimaiUI.WatermarkStatus or "Loaded"),
         tostring(MimaiUI.WatermarkKey or "RightShift"),
         tostring(MimaiUI.FPS or 0),
@@ -320,7 +565,7 @@ function playMimaiLoadSplash()
     splashTitle.Font = Enum.Font.GothamBlack
     splashTitle.TextSize = 22
     splashTitle.RichText = true
-    splashTitle.Text = '🏆 <font color="#ffc446">TrophyScripts</font> <font color="#30d982">🍀</font>'
+    splashTitle.Text = '🏆 <font color="#ffc83d">TrophyScripts</font>'
     splashTitle.TextColor3 = MimaiUI.Text
     splashTitle.ZIndex = 51
     splashTitle.Parent = splash
@@ -331,7 +576,7 @@ function playMimaiLoadSplash()
     splashSub.Size = UDim2.new(1, 0, 0, 20)
     splashSub.Font = Enum.Font.GothamSemibold
     splashSub.TextSize = 12
-    splashSub.Text = 'discord.gg/trophyscripts'
+    splashSub.Text = 'discord.gg/trophyscripts • TB3 edition'
     splashSub.TextColor3 = MimaiUI.Muted
     splashSub.ZIndex = 51
     splashSub.Parent = splash
@@ -428,7 +673,7 @@ function createNotificationCard(title, body, duration)
     titleLabel.Font = Enum.Font.GothamBold
     titleLabel.TextSize = 13
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.Text = tostring(title or "🏆 TrophyScripts")
+    titleLabel.Text = tostring(title or "🍊 Miami")
     titleLabel.TextColor3 = MimaiUI.Text
     titleLabel.ZIndex = 22
     titleLabel.Parent = card
@@ -470,7 +715,7 @@ function sendNotification(title, text, duration)
     pcall(createNotificationCard, title, text, duration)
     pcall(function()
         StarterGui:SetCore("SendNotification", {
-            Title = tostring(title or "🏆 TrophyScripts"),
+            Title = tostring(title or "🍊 Miami"),
             Text = tostring(text or ""),
             Duration = duration or 5,
         })
@@ -1089,1132 +1334,195 @@ end
 ------------------------------------------------------------
 function StartMiamiFootballGameOverlay(opponentOverride)
     local TweenService = game:GetService("TweenService")
-
+    local UserInputService = game:GetService("UserInputService")
     local pg = LocalPlayer and LocalPlayer:FindFirstChildOfClass("PlayerGui")
     if not pg then pcall(function() pg = LocalPlayer:WaitForChild("PlayerGui", 5) end) end
 
-    local function pick(list)
-        return list[math.random(1, #list)]
-    end
-
-    local function clampScoreChance(scoreA, scoreB, quarter)
-        local total = scoreA + scoreB
-        if quarter <= 4 then
-            if total >= 70 then return 4 end
-            if total >= 56 then return 9 end
-            if total >= 42 then return 18 end
-            return 34
-        end
-        return 22
-    end
-
-    local MiamiRoster = {
-        "Carter Brown", "Jayden Rivers", "Malik Thompson", "Darius King",
-        "Isaiah Horton", "Andre Coleman", "Tyler Ward", "Jalen Brooks",
-        "Marcus Reed", "Chris Daniels", "Rico Bennett", "Cam Johnson",
-        "Devin Hayes", "Trey Williams", "KJ Franklin", "Lamar Price",
-    }
-
-    local CollegeTeams = {
-        {Name="NOTRE DAME", Short="ND", Color=Color3.fromRGB(184,134,70), Players={"CJ Carr","Jeremiyah Love","Jordan Faison","Eli Raridon","Jaylen Sneed","Aneyas Williams"}},
-        {Name="FLORIDA STATE", Short="FSU", Color=Color3.fromRGB(120,47,64), Players={"Luke Kromenhoek","Hykeem Williams","Roydell Williams","Lawrance Toafili","Ja'Khi Douglas","Cam Riley"}},
-        {Name="FLORIDA", Short="UF", Color=Color3.fromRGB(0,65,130), Players={"DJ Lagway","Tre Wilson","Montrell Johnson","Eugene Wilson","Aidan Mizell","Jadan Baugh"}},
-        {Name="GEORGIA", Short="UGA", Color=Color3.fromRGB(186,12,47), Players={"Gunner Stockton","Dillon Bell","Oscar Delp","Cash Jones","London Humphreys","CJ Allen"}},
-        {Name="ALABAMA", Short="BAMA", Color=Color3.fromRGB(158,27,50), Players={"Ty Simpson","Ryan Williams","Jam Miller","Germie Bernard","Justice Haynes","Kendrick Law"}},
-        {Name="LSU", Short="LSU", Color=Color3.fromRGB(70,29,124), Players={"Garrett Nussmeier","Chris Hilton","Kaleb Jackson","Kyren Lacy","Aaron Anderson","Caden Durham"}},
-        {Name="CLEMSON", Short="CLEM", Color=Color3.fromRGB(245,102,0), Players={"Cade Klubnik","Antonio Williams","Phil Mafah","Tyler Brown","Adam Randall","Wes Goodwin"}},
-        {Name="OHIO STATE", Short="OSU", Color=Color3.fromRGB(187,0,0), Players={"Julian Sayin","Jeremiah Smith","Carnell Tate","TreVeyon Henderson","Brandon Inniss","CJ Hicks"}},
-        {Name="MICHIGAN", Short="MICH", Color=Color3.fromRGB(0,39,76), Players={"Alex Orji","Donovan Edwards","Colston Loveland","Semaj Morgan","Kalel Mullings","Will Johnson"}},
-        {Name="OREGON", Short="ORE", Color=Color3.fromRGB(18,71,52), Players={"Dante Moore","Evan Stewart","Jordan James","Tez Johnson","Noah Whittington","Matayo Uiagalelei"}},
-        {Name="TEXAS", Short="TEX", Color=Color3.fromRGB(191,87,0), Players={"Arch Manning","CJ Baxter","Ryan Wingo","Johntay Cook","Jaydon Blue","Anthony Hill"}},
-        {Name="OKLAHOMA", Short="OU", Color=Color3.fromRGB(132,22,23), Players={"Jackson Arnold","Gavin Sawchuk","Nic Anderson","Jalil Farooq","Deion Burks","Billy Bowman"}},
-        {Name="USC", Short="USC", Color=Color3.fromRGB(153,27,30), Players={"Miller Moss","Zachariah Branch","Ja'Kobi Lane","Quinten Joyner","Duce Robinson","Makai Lemon"}},
-        {Name="PENN STATE", Short="PSU", Color=Color3.fromRGB(30,64,124), Players={"Drew Allar","Nick Singleton","Kaytron Allen","Trey Wallace","Tyler Warren","Abdul Carter"}},
-        {Name="TENNESSEE", Short="TENN", Color=Color3.fromRGB(255,130,0), Players={"Nico Iamaleava","Dylan Sampson","Squirrel White","Bru McCoy","Mike Matthews","James Pearce"}},
-        {Name="TEXAS A&M", Short="A&M", Color=Color3.fromRGB(80,0,0), Players={"Marcel Reed","Le'Veon Moss","Noah Thomas","Rueben Owens","Conner Weigman","Taurean York"}},
-        {Name="WASHINGTON", Short="WASH", Color=Color3.fromRGB(51,0,111), Players={"Demon Williams","Giles Jackson","Denzel Boston","Jonah Coleman","Will Rogers","Carson Bruener"}},
-        {Name="UTAH", Short="UTAH", Color=Color3.fromRGB(204,0,0), Players={"Cam Rising","Micah Bernard","Money Parks","Dorian Singer","Brant Kuithe","Lander Barton"}},
-        {Name="AUBURN", Short="AUB", Color=Color3.fromRGB(12,35,64), Players={"Payton Thorne","Cam Coleman","Jarquez Hunter","KeAndre Lambert-Smith","Rivaldo Fairweather","Keldric Faulk"}},
-        {Name="WISCONSIN", Short="WISC", Color=Color3.fromRGB(197,5,12), Players={"Tyler Van Dyke","Chez Mellusi","Will Pauling","Bryson Green","Tawee Walker","Hunter Wohler"}},
-        {Name="IOWA", Short="IOWA", Color=Color3.fromRGB(255,205,0), Players={"Cade McNamara","Kaleb Johnson","Luke Lachey","Seth Anderson","Leshon Williams","Jay Higgins"}},
-        {Name="NORTH CAROLINA", Short="UNC", Color=Color3.fromRGB(123,175,212), Players={"Max Johnson","Omarion Hampton","JJ Jones","Nate McCollum","Kobe Paysour","Power Echols"}},
-        {Name="LOUISVILLE", Short="LOU", Color=Color3.fromRGB(173,0,0), Players={"Tyler Shough","Isaac Brown","Caullin Lacy","Chris Bell","Ahmari Huggins-Bruce","TJ Quinn"}},
-        {Name="VIRGINIA TECH", Short="VT", Color=Color3.fromRGB(99,0,49), Players={"Kyron Drones","Bhayshul Tuten","Jaylin Lane","Da'Quan Felton","Ali Jennings","Antwaun Powell-Ryland"}},
-        {Name="BAYLOR", Short="BAY", Color=Color3.fromRGB(0,82,48), Players={"Dequan Finn","Richard Reese","Monaray Baldwin","Ketron Jackson","Bryson Washington","Matt Jones"}},
-        {Name="TCU", Short="TCU", Color=Color3.fromRGB(77,25,121), Players={"Josh Hoover","Savion Williams","JP Richardson","Cam Cook","Eric McAlister","Namdi Obiazor"}},
-        {Name="NEBRASKA", Short="NEB", Color=Color3.fromRGB(227,25,55), Players={"Dylan Raiola","Dante Dowdell","Malachi Coleman","Jahmal Banks","Thomas Fidone","Isaac Gifford"}},
-        {Name="COLORADO", Short="CU", Color=Color3.fromRGB(207,184,124), Players={"Shedeur Sanders","Travis Hunter","Jimmy Horn","Dylan Edwards","LaJohntay Wester","Shilo Sanders"}},
-        {Name="STANFORD", Short="STAN", Color=Color3.fromRGB(140,21,21), Players={"Ashton Daniels","Elic Ayomanor","Tiger Bachmeier","Sedrick Irvin","Justin Lamson","David Bailey"}},
-        {Name="UCLA", Short="UCLA", Color=Color3.fromRGB(45,104,196), Players={"Ethan Garbers","TJ Harden","J.Michael Sturdivant","Logan Loya","Moliki Matavao","Kain Medrano"}},
-    }
-
-    opponentOverride = opponentOverride or getgenv().MiamiFootballOpponent
-    local opponent = CollegeTeams[math.random(1, #CollegeTeams)]
-    if opponentOverride then
-        for _, t in ipairs(CollegeTeams) do
-            if t.Name == opponentOverride or t.Short == opponentOverride then opponent = t; break end
-        end
-    end
-
-    local TeamImages = getgenv().MiamiFootballTeamImages or {}
-    local miamiImages = TeamImages.MIAMI or TeamImages["MIAMI"] or {}
-    local oppImages = TeamImages[opponent.Name] or TeamImages[opponent.Short] or {}
-    opponent.Logo = opponent.Logo or oppImages.Logo
-    opponent.Photo = opponent.Photo or oppImages.Photo
-    local MiamiLogoAsset = getgenv().MiamiLogoAsset or miamiImages.Logo
-    local MiamiPhotoAsset = getgenv().MiamiTeamPhotoAsset or miamiImages.Photo
-
     local gui = Instance.new("ScreenGui")
-    gui.Name = "MiamiFootballMoneyGame"
+    gui.Name = "TrophyGeneratorFinal"
     gui.ResetOnSpawn = false
     gui.IgnoreGuiInset = true
-    gui.DisplayOrder = 99998
-    local okParent = pcall(function() gui.Parent = CoreGui end)
-    if not okParent and pg then gui.Parent = pg end
-    if not gui.Parent then return function() end end
+    gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    pcall(function() gui.Parent = game:GetService("CoreGui") end)
+    if not gui.Parent then gui.Parent = pg end
 
-    local frame = Instance.new("Frame")
-    frame.Name = "Scorebug"
-    frame.AnchorPoint = Vector2.new(0.5, 0)
-    frame.Position = UDim2.new(0.5, 0, 0, -190)
-    frame.Size = UDim2.fromOffset(470, 258)
-    frame.BackgroundColor3 = Color3.fromRGB(8, 14, 10)
-    frame.BackgroundTransparency = 0.05
-    frame.BorderSizePixel = 0
-    frame.ClipsDescendants = true
-    frame.Parent = gui
+    local mainFrame = Instance.new("Frame")
+    mainFrame.Size = UDim2.fromScale(1, 1)
+    mainFrame.BackgroundColor3 = Color3.fromRGB(2, 2, 5)
+    mainFrame.BackgroundTransparency = 0.1
+    mainFrame.Parent = gui
 
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 14)
-    corner.Parent = frame
+    local barContainer = Instance.new("Frame")
+    barContainer.Size = UDim2.new(0.6, 0, 0, 24)
+    barContainer.Position = UDim2.new(0.2, 0, 0.9, 0)
+    barContainer.BackgroundColor3 = Color3.fromRGB(15, 15, 25)
+    barContainer.Parent = mainFrame
+    Instance.new("UICorner", barContainer)
+    Instance.new("UIStroke", barContainer).Color = Color3.fromRGB(0, 255, 255)
+    
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.fromScale(0, 1)
+    fill.BackgroundColor3 = Color3.fromRGB(0, 255, 150)
+    fill.Parent = barContainer
+    Instance.new("UICorner", fill)
 
-    local stroke = Instance.new("UIStroke")
-    stroke.Color = Color3.fromRGB(61, 255, 138)
-    stroke.Thickness = 1.8
-    stroke.Transparency = 0.05
-    stroke.Parent = frame
+    local progressText = Instance.new("TextLabel")
+    progressText.Size = UDim2.new(1, 0, 0, 20)
+    progressText.Position = UDim2.new(0, 0, 0, -30)
+    progressText.BackgroundTransparency = 1
+    progressText.Font = Enum.Font.GothamBold
+    progressText.TextSize = 16
+    progressText.TextColor3 = Color3.new(1,1,1)
+    progressText.Text = "GENERATE MAX ILLEGAL MONEY: 0%"
+    progressText.Parent = barContainer
 
-    local strokeGrad = Instance.new("UIGradient")
-    strokeGrad.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(40,170,100)),
-        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(120,255,160)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(40,170,100)),
-    }
-    strokeGrad.Parent = stroke
-    task.spawn(function()
-        local r = 0
-        while strokeGrad.Parent do
-            r = (r + 3) % 360
-            strokeGrad.Rotation = r
-            task.wait(0.04)
-        end
-    end)
+    local gunFrame = Instance.new("Frame")
+    gunFrame.Size = UDim2.fromOffset(300, 450)
+    gunFrame.Position = UDim2.new(0.5, 0, 1, 0)
+    gunFrame.AnchorPoint = Vector2.new(0.5, 1)
+    gunFrame.BackgroundTransparency = 1
+    gunFrame.Parent = mainFrame
+    
+    local gunBody = Instance.new("Frame")
+    gunBody.Size = UDim2.fromOffset(90, 320)
+    gunBody.Position = UDim2.fromOffset(105, 130)
+    gunBody.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+    gunBody.BorderSizePixel = 0
+    gunBody.Parent = gunFrame
+    Instance.new("UIStroke", gunBody).Color = Color3.fromRGB(255, 0, 255)
 
-    local bg = Instance.new("ImageLabel")
-    bg.Name = "FootballBg"
-    bg.BackgroundTransparency = 1
-    bg.Size = UDim2.fromScale(1, 1)
-    bg.Image = "rbxassetid://100121801281958"
-    bg.ScaleType = Enum.ScaleType.Crop
-    bg.ImageTransparency = 0.36
-    bg.ZIndex = 0
-    bg.Parent = frame
+    local muzzle = Instance.new("Frame")
+    muzzle.Size = UDim2.fromOffset(50, 25)
+    muzzle.Position = UDim2.fromOffset(20, -20)
+    muzzle.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    muzzle.Parent = gunBody
 
-    local shade = Instance.new("Frame")
-    shade.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-    shade.BackgroundTransparency = 0.16
-    shade.BorderSizePixel = 0
-    shade.Size = UDim2.fromScale(1, 1)
-    shade.ZIndex = 1
-    shade.Parent = frame
+    local flash = Instance.new("Frame")
+    flash.Size = UDim2.fromOffset(120, 120)
+    flash.Position = UDim2.fromOffset(-35, -70)
+    flash.BackgroundColor3 = Color3.fromRGB(255, 255, 100)
+    flash.BackgroundTransparency = 1
+    flash.Parent = muzzle
+    Instance.new("UICorner", flash).CornerRadius = UDim.new(1, 0)
 
-    local topBar = Instance.new("Frame")
-    topBar.BackgroundColor3 = Color3.fromRGB(11, 24, 14)
-    topBar.BackgroundTransparency = 0.04
-    topBar.BorderSizePixel = 0
-    topBar.Size = UDim2.new(1, 0, 0, 32)
-    topBar.ZIndex = 2
-    topBar.Parent = frame
+    local crosshair = Instance.new("Frame")
+    crosshair.Size = UDim2.fromOffset(24, 24)
+    crosshair.BackgroundTransparency = 1
+    crosshair.ZIndex = 20
+    crosshair.Parent = mainFrame
+    local hL = Instance.new("Frame", crosshair)
+    hL.Size = UDim2.new(1, 0, 0, 2); hL.Position = UDim2.new(0, 0, 0.5, -1); hL.BackgroundColor3 = Color3.new(1, 0, 0)
+    local vL = Instance.new("Frame", crosshair)
+    vL.Size = UDim2.new(0, 2, 1, 0); vL.Position = UDim2.new(0.5, -1, 0, 0); vL.BackgroundColor3 = Color3.new(1, 0, 0)
 
     local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 100)
+    title.Position = UDim2.fromOffset(0, 30)
     title.BackgroundTransparency = 1
-    title.Position = UDim2.fromOffset(12, 0)
-    title.Size = UDim2.new(1, -150, 1, 0)
     title.Font = Enum.Font.GothamBlack
-    title.TextSize = 13
-    title.RichText = true
-    title.TextXAlignment = Enum.TextXAlignment.Left
-    title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    title.TextStrokeTransparency = 0.5
-    title.ZIndex = 3
-    title.Text = '<font color="#3dff8a">MIAMI</font> MONEY BOWL  •  COLLEGE SHOWDOWN'
-    title.Parent = topBar
+    title.TextSize = 50
+    title.TextColor3 = Color3.fromRGB(0, 255, 255)
+    title.Text = "TROPHY GENERATOR ACTIVE"
+    title.Parent = mainFrame
 
-    local quarter = Instance.new("TextLabel")
-    quarter.BackgroundTransparency = 1
-    quarter.Position = UDim2.new(1, -132, 0, 0)
-    quarter.Size = UDim2.fromOffset(120, 32)
-    quarter.Font = Enum.Font.GothamBlack
-    quarter.TextSize = 13
-    quarter.TextXAlignment = Enum.TextXAlignment.Right
-    quarter.TextColor3 = Color3.fromRGB(255, 255, 255)
-    quarter.TextStrokeTransparency = 0.45
-    quarter.ZIndex = 3
-    quarter.Text = "Q1 15:00"
-    quarter.Parent = topBar
+    local scoreLabel = Instance.new("TextLabel")
+    scoreLabel.Size = UDim2.fromOffset(240, 60)
+    scoreLabel.Position = UDim2.new(0.5, -120, 0, 130)
+    scoreLabel.BackgroundColor3 = Color3.fromRGB(10, 10, 15)
+    scoreLabel.Font = Enum.Font.GothamBlack
+    scoreLabel.TextSize = 30
+    scoreLabel.TextColor3 = Color3.fromRGB(255, 215, 0)
+    scoreLabel.Text = "TROPHIES: 0"
+    scoreLabel.Parent = mainFrame
+    Instance.new("UICorner", scoreLabel)
+    Instance.new("UIStroke", scoreLabel).Color = Color3.fromRGB(255, 215, 0)
 
-    local miamiBox = Instance.new("Frame")
-    miamiBox.Position = UDim2.fromOffset(14, 44)
-    miamiBox.Size = UDim2.fromOffset(213, 54)
-    miamiBox.BackgroundColor3 = Color3.fromRGB(0, 90, 55)
-    miamiBox.BackgroundTransparency = 0.06
-    miamiBox.BorderSizePixel = 0
-    miamiBox.ZIndex = 2
-    miamiBox.Parent = frame
-    local mbc = Instance.new("UICorner"); mbc.CornerRadius = UDim.new(0, 9); mbc.Parent = miamiBox
-
-    local oppBox = Instance.new("Frame")
-    oppBox.Position = UDim2.new(1, -227, 0, 44)
-    oppBox.Size = UDim2.fromOffset(213, 54)
-    oppBox.BackgroundColor3 = opponent.Color
-    oppBox.BackgroundTransparency = 0.06
-    oppBox.BorderSizePixel = 0
-    oppBox.ZIndex = 2
-    oppBox.Parent = frame
-    local obc = Instance.new("UICorner"); obc.CornerRadius = UDim.new(0, 9); obc.Parent = oppBox
-
-    local function makeTeamPhotoBackground(parent, asset, shortName, color, side)
-        local holder = Instance.new("Frame")
-        holder.Name = "TeamPhotoBackdrop"
-        holder.BackgroundTransparency = 1
-        holder.ClipsDescendants = true
-        holder.Size = UDim2.fromScale(1, 1)
-        holder.ZIndex = 2
-        holder.Parent = parent
-
-        if asset and tostring(asset) ~= "" then
-            local img = Instance.new("ImageLabel")
-            img.BackgroundTransparency = 1
-            img.Size = UDim2.fromScale(1.15, 1.15)
-            img.Position = UDim2.fromScale(-0.075, -0.075)
-            img.Image = tostring(asset)
-            img.ScaleType = Enum.ScaleType.Crop
-            img.ImageTransparency = 0.38
-            img.ZIndex = 2
-            img.Parent = holder
-            local fade = Instance.new("UIGradient")
-            fade.Rotation = (side == "Right") and 180 or 0
-            fade.Transparency = NumberSequence.new{
-                NumberSequenceKeypoint.new(0.00, 0.15),
-                NumberSequenceKeypoint.new(0.55, 0.55),
-                NumberSequenceKeypoint.new(1.00, 0.88),
-            }
-            fade.Parent = img
-        else
-            local poster = Instance.new("TextLabel")
-            poster.BackgroundTransparency = 1
-            poster.AnchorPoint = Vector2.new(0.5, 0.5)
-            poster.Position = UDim2.fromScale((side == "Right") and 0.72 or 0.28, 0.55)
-            poster.Size = UDim2.fromOffset(120, 70)
-            poster.Font = Enum.Font.GothamBlack
-            poster.Text = tostring(shortName)
-            poster.TextSize = (#tostring(shortName) > 3) and 24 or 34
-            poster.TextColor3 = Color3.fromRGB(255,255,255)
-            poster.TextTransparency = 0.68
-            poster.TextStrokeTransparency = 0.85
-            poster.Rotation = (side == "Right") and 10 or -10
-            poster.ZIndex = 2
-            poster.Parent = holder
-            local stripe = Instance.new("Frame")
-            stripe.BackgroundColor3 = Color3.fromRGB(255,255,255)
-            stripe.BackgroundTransparency = 0.82
-            stripe.BorderSizePixel = 0
-            stripe.AnchorPoint = Vector2.new(0.5, 0.5)
-            stripe.Position = UDim2.fromScale(0.5, 0.5)
-            stripe.Size = UDim2.new(1.25, 0, 0, 12)
-            stripe.Rotation = (side == "Right") and -18 or 18
-            stripe.ZIndex = 2
-            stripe.Parent = holder
-        end
-        local tint = Instance.new("Frame")
-        tint.BackgroundColor3 = color
-        tint.BackgroundTransparency = 0.72
-        tint.BorderSizePixel = 0
-        tint.Size = UDim2.fromScale(1, 1)
-        tint.ZIndex = 2
-        tint.Parent = holder
-        return holder
-    end
-
-    local function makeLogoBadge(parent, logoText, color, side, logoAsset)
-        local badge = Instance.new("Frame")
-        badge.Name = "TeamLogo"
-        badge.Size = UDim2.fromOffset(34, 34)
-        badge.Position = (side == "Right") and UDim2.new(1, -42, 0, 10) or UDim2.fromOffset(8, 10)
-        badge.BackgroundColor3 = color
-        badge.BackgroundTransparency = 0
-        badge.BorderSizePixel = 0
-        badge.ZIndex = 4
-        badge.Parent = parent
-
-        local bc = Instance.new("UICorner")
-        bc.CornerRadius = UDim.new(1, 0)
-        bc.Parent = badge
-
-        local bs = Instance.new("UIStroke")
-        bs.Color = Color3.fromRGB(255, 255, 255)
-        bs.Thickness = 1.5
-        bs.Transparency = 0.15
-        bs.Parent = badge
-
-        local grad = Instance.new("UIGradient")
-        grad.Rotation = 35
-        grad.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(255,255,255)),
-            ColorSequenceKeypoint.new(0.18, color),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(0,0,0)),
-        }
-        grad.Transparency = NumberSequence.new{
-            NumberSequenceKeypoint.new(0, 0.78),
-            NumberSequenceKeypoint.new(1, 0.15),
-        }
-        grad.Parent = badge
-
-        if logoAsset and tostring(logoAsset) ~= "" then
-            local img = Instance.new("ImageLabel")
-            img.BackgroundTransparency = 1
-            img.Size = UDim2.fromScale(0.86, 0.86)
-            img.Position = UDim2.fromScale(0.07, 0.07)
-            img.Image = tostring(logoAsset)
-            img.ScaleType = Enum.ScaleType.Fit
-            img.ZIndex = 5
-            img.Parent = badge
-        else
-            local txt = Instance.new("TextLabel")
-            txt.BackgroundTransparency = 1
-            txt.Size = UDim2.fromScale(1, 1)
-            txt.Font = Enum.Font.GothamBlack
-            txt.TextSize = (#tostring(logoText) > 2) and 11 or 16
-            txt.Text = tostring(logoText)
-            txt.TextColor3 = Color3.fromRGB(255, 255, 255)
-            txt.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
-            txt.TextStrokeTransparency = 0.2
-            txt.ZIndex = 5
-            txt.Parent = badge
-        end
-
-        return badge
-    end
-
-    local miamiPhotoBackdrop = makeTeamPhotoBackground(miamiBox, MiamiPhotoAsset, "U", Color3.fromRGB(244, 115, 33), "Left")
-    local oppPhotoBackdrop = makeTeamPhotoBackground(oppBox, opponent.Photo, opponent.Short, opponent.Color, "Right")
-
-    local miamiLogo = makeLogoBadge(miamiBox, "U", Color3.fromRGB(244, 115, 33), "Left", MiamiLogoAsset)
-    local oppLogo = makeLogoBadge(oppBox, opponent.Short, opponent.Color, "Right", opponent.Logo)
-
-    local function makeTeamLabel(parent, txt, side)
-        local l = Instance.new("TextLabel")
-        l.BackgroundTransparency = 1
-        if side == Enum.TextXAlignment.Right then
-            l.Position = UDim2.fromOffset(8, 4)
-            l.Size = UDim2.new(1, -56, 0, 18)
-        else
-            l.Position = UDim2.fromOffset(48, 4)
-            l.Size = UDim2.new(1, -56, 0, 18)
-        end
-        l.Font = Enum.Font.GothamBlack
-        l.TextSize = 12
-        l.TextXAlignment = side or Enum.TextXAlignment.Left
-        l.TextColor3 = Color3.fromRGB(255, 255, 255)
-        l.TextStrokeTransparency = 0.25
-        l.ZIndex = 3
-        l.Text = txt
-        l.Parent = parent
-        return l
-    end
-
-    makeTeamLabel(miamiBox, "MIAMI", Enum.TextXAlignment.Left)
-    makeTeamLabel(oppBox, opponent.Name, Enum.TextXAlignment.Right)
-
-    local function makeScoreLabel(parent, side)
-        local l = Instance.new("TextLabel")
-        l.BackgroundTransparency = 1
-        if side == Enum.TextXAlignment.Right then
-            l.Position = UDim2.fromOffset(8, 20)
-            l.Size = UDim2.new(1, -56, 0, 30)
-        else
-            l.Position = UDim2.fromOffset(48, 20)
-            l.Size = UDim2.new(1, -56, 0, 30)
-        end
-        l.Font = Enum.Font.GothamBlack
-        l.TextSize = 29
-        l.TextXAlignment = side
-        l.TextColor3 = Color3.fromRGB(255, 255, 255)
-        l.TextStrokeTransparency = 0.1
-        l.ZIndex = 3
-        l.Text = "0"
-        l.Parent = parent
-        return l
-    end
-
-    local miamiScoreLabel = makeScoreLabel(miamiBox, Enum.TextXAlignment.Left)
-    local oppScoreLabel = makeScoreLabel(oppBox, Enum.TextXAlignment.Right)
-
-    local play = Instance.new("TextLabel")
-    play.BackgroundTransparency = 1
-    play.Position = UDim2.fromOffset(14, 105)
-    play.Size = UDim2.new(1, -28, 0, 35)
-    play.Font = Enum.Font.GothamBold
-    play.TextSize = 14
-    play.TextWrapped = true
-    play.RichText = true
-    play.TextColor3 = Color3.fromRGB(245, 245, 245)
-    play.TextStrokeTransparency = 0.34
-    play.ZIndex = 2
-    play.Text = '<font color="#3dff8a">KICKOFF!</font> Money generation drive is starting...'
-    play.Parent = frame
-
-    local scorer = Instance.new("TextLabel")
-    scorer.BackgroundTransparency = 1
-    scorer.Position = UDim2.fromOffset(14, 135)
-    scorer.Size = UDim2.new(1, -28, 0, 20)
-    scorer.Font = Enum.Font.GothamSemibold
-    scorer.TextSize = 12
-    scorer.RichText = true
-    scorer.TextColor3 = Color3.fromRGB(210, 220, 210)
-    scorer.TextStrokeTransparency = 0.55
-    scorer.ZIndex = 2
-    scorer.Text = "Scoring player will show here."
-    scorer.Parent = frame
-
-    local driveLabel = Instance.new("TextLabel")
-    driveLabel.BackgroundTransparency = 1
-    driveLabel.Position = UDim2.fromOffset(14, 154)
-    driveLabel.Size = UDim2.new(1, -150, 0, 18)
-    driveLabel.Font = Enum.Font.GothamBlack
-    driveLabel.TextSize = 12
-    driveLabel.RichText = true
-    driveLabel.TextXAlignment = Enum.TextXAlignment.Left
-    driveLabel.TextColor3 = Color3.fromRGB(235, 245, 235)
-    driveLabel.TextStrokeTransparency = 0.45
-    driveLabel.ZIndex = 2
-    driveLabel.Text = "1ST & 10  •  BALL ON MIA 25"
-    driveLabel.Parent = frame
-
-    local redZoneLabel = Instance.new("TextLabel")
-    redZoneLabel.BackgroundTransparency = 1
-    redZoneLabel.Position = UDim2.new(1, -132, 0, 154)
-    redZoneLabel.Size = UDim2.fromOffset(118, 18)
-    redZoneLabel.Font = Enum.Font.GothamBlack
-    redZoneLabel.TextSize = 12
-    redZoneLabel.TextXAlignment = Enum.TextXAlignment.Right
-    redZoneLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
-    redZoneLabel.TextStrokeTransparency = 0.25
-    redZoneLabel.ZIndex = 2
-    redZoneLabel.Text = ""
-    redZoneLabel.Parent = frame
-
-    local fieldFrame = Instance.new("Frame")
-    fieldFrame.Position = UDim2.fromOffset(24, 178)
-    fieldFrame.Size = UDim2.new(1, -48, 0, 25)
-    fieldFrame.BackgroundColor3 = Color3.fromRGB(25, 92, 42)
-    fieldFrame.BackgroundTransparency = 0.08
-    fieldFrame.BorderSizePixel = 0
-    fieldFrame.ZIndex = 2
-    fieldFrame.Parent = frame
-    local ffc = Instance.new("UICorner"); ffc.CornerRadius = UDim.new(0, 5); ffc.Parent = fieldFrame
-    local ffs = Instance.new("UIStroke"); ffs.Color = Color3.fromRGB(210,255,210); ffs.Transparency = 0.55; ffs.Thickness = 1; ffs.Parent = fieldFrame
-    for i = 1, 9 do
-        local yard = Instance.new("Frame")
-        yard.BackgroundColor3 = Color3.fromRGB(235, 255, 235)
-        yard.BackgroundTransparency = 0.45
-        yard.BorderSizePixel = 0
-        yard.Position = UDim2.new(i/10, 0, 0, 3)
-        yard.Size = UDim2.new(0, 1, 1, -6)
-        yard.ZIndex = 3
-        yard.Parent = fieldFrame
-    end
-
-    local ballMarker = Instance.new("TextLabel")
-    ballMarker.BackgroundTransparency = 1
-    ballMarker.AnchorPoint = Vector2.new(0.5, 0.5)
-    ballMarker.Position = UDim2.new(0.25, 0, 0.5, 0)
-    ballMarker.Size = UDim2.fromOffset(26, 22)
-    ballMarker.Font = Enum.Font.GothamBlack
-    ballMarker.TextSize = 17
-    ballMarker.Text = "🏈"
-    ballMarker.TextStrokeTransparency = 0.35
-    ballMarker.ZIndex = 5
-    ballMarker.Parent = fieldFrame
-
-    local momentumBack = Instance.new("Frame")
-    momentumBack.Position = UDim2.fromOffset(45, 209)
-    momentumBack.Size = UDim2.new(1, -90, 0, 8)
-    momentumBack.BackgroundColor3 = opponent.Color
-    momentumBack.BackgroundTransparency = 0.1
-    momentumBack.BorderSizePixel = 0
-    momentumBack.ZIndex = 2
-    momentumBack.Parent = frame
-    local mbk = Instance.new("UICorner"); mbk.CornerRadius = UDim.new(1, 0); mbk.Parent = momentumBack
-
-    local momentumFill = Instance.new("Frame")
-    momentumFill.Size = UDim2.new(0.5, 0, 1, 0)
-    momentumFill.BackgroundColor3 = Color3.fromRGB(61, 255, 138)
-    momentumFill.BorderSizePixel = 0
-    momentumFill.ZIndex = 3
-    momentumFill.Parent = momentumBack
-    local mfc = Instance.new("UICorner"); mfc.CornerRadius = UDim.new(1, 0); mfc.Parent = momentumFill
-
-    local lowerThird = Instance.new("Frame")
-    lowerThird.Name = "LowerThird"
-    lowerThird.Position = UDim2.new(0, -470, 0, 100)
-    lowerThird.Size = UDim2.new(1, 0, 0, 55)
-    lowerThird.BackgroundColor3 = Color3.fromRGB(6, 12, 8)
-    lowerThird.BackgroundTransparency = 0.04
-    lowerThird.BorderSizePixel = 0
-    lowerThird.Visible = false
-    lowerThird.ZIndex = 6
-    lowerThird.Parent = frame
-    local lts = Instance.new("UIStroke"); lts.Color = Color3.fromRGB(61,255,138); lts.Transparency = 0.25; lts.Parent = lowerThird
-    local ltTitle = Instance.new("TextLabel")
-    ltTitle.BackgroundTransparency = 1
-    ltTitle.Position = UDim2.fromOffset(12, 4)
-    ltTitle.Size = UDim2.new(1, -24, 0, 23)
-    ltTitle.Font = Enum.Font.GothamBlack
-    ltTitle.TextSize = 18
-    ltTitle.RichText = true
-    ltTitle.TextXAlignment = Enum.TextXAlignment.Left
-    ltTitle.TextColor3 = Color3.fromRGB(255,255,255)
-    ltTitle.TextStrokeTransparency = 0.25
-    ltTitle.ZIndex = 7
-    ltTitle.Parent = lowerThird
-    local ltSub = Instance.new("TextLabel")
-    ltSub.BackgroundTransparency = 1
-    ltSub.Position = UDim2.fromOffset(12, 28)
-    ltSub.Size = UDim2.new(1, -24, 0, 20)
-    ltSub.Font = Enum.Font.GothamSemibold
-    ltSub.TextSize = 12
-    ltSub.RichText = true
-    ltSub.TextXAlignment = Enum.TextXAlignment.Left
-    ltSub.TextColor3 = Color3.fromRGB(220,230,220)
-    ltSub.TextStrokeTransparency = 0.55
-    ltSub.ZIndex = 7
-    ltSub.Parent = lowerThird
-
-    local statsCard = Instance.new("Frame")
-    statsCard.AnchorPoint = Vector2.new(0.5, 0.5)
-    statsCard.Position = UDim2.new(0.5, 0, 0.5, 0)
-    statsCard.Size = UDim2.fromOffset(0, 0)
-    statsCard.BackgroundColor3 = Color3.fromRGB(7, 13, 9)
-    statsCard.BackgroundTransparency = 0.05
-    statsCard.BorderSizePixel = 0
-    statsCard.Visible = false
-    statsCard.ZIndex = 11
-    statsCard.Parent = frame
-    local scc = Instance.new("UICorner"); scc.CornerRadius = UDim.new(0, 12); scc.Parent = statsCard
-    local scs = Instance.new("UIStroke"); scs.Color = Color3.fromRGB(61,255,138); scs.Thickness = 1.5; scs.Parent = statsCard
-    local statsText = Instance.new("TextLabel")
-    statsText.BackgroundTransparency = 1
-    statsText.Position = UDim2.fromOffset(12, 8)
-    statsText.Size = UDim2.new(1, -24, 1, -16)
-    statsText.Font = Enum.Font.GothamBold
-    statsText.TextSize = 13
-    statsText.RichText = true
-    statsText.TextWrapped = true
-    statsText.TextColor3 = Color3.fromRGB(235,245,235)
-    statsText.TextStrokeTransparency = 0.45
-    statsText.ZIndex = 12
-    statsText.Text = ""
-    statsText.Parent = statsCard
-
-    local ticker = Instance.new("TextLabel")
-    ticker.BackgroundColor3 = Color3.fromRGB(5, 8, 6)
-    ticker.BackgroundTransparency = 0.16
-    ticker.BorderSizePixel = 0
-    ticker.Position = UDim2.new(0, 0, 1, -22)
-    ticker.Size = UDim2.new(1, 0, 0, 22)
-    ticker.Font = Enum.Font.GothamSemibold
-    ticker.TextSize = 11
-    ticker.TextXAlignment = Enum.TextXAlignment.Left
-    ticker.TextColor3 = Color3.fromRGB(220, 230, 220)
-    ticker.RichText = true
-    ticker.ZIndex = 2
-    ticker.Text = "   ESPN COLLEGE FOOTBALL  •  MIAMI MONEY DRIVE  •  LIVE"
-    ticker.Parent = frame
-
-    local ball = Instance.new("TextLabel")
-    ball.BackgroundTransparency = 1
-    ball.Size = UDim2.fromOffset(28, 20)
-    ball.Position = UDim2.fromOffset(218, 205)
-    ball.Font = Enum.Font.GothamBlack
-    ball.TextSize = 18
-    ball.Text = "🏈"
-    ball.ZIndex = 4
-    ball.Parent = frame
-
-    local progressBack = Instance.new("Frame")
-    progressBack.Position = UDim2.new(0, 45, 1, -34)
-    progressBack.Size = UDim2.new(1, -90, 0, 5)
-    progressBack.BackgroundColor3 = Color3.fromRGB(25, 35, 28)
-    progressBack.BorderSizePixel = 0
-    progressBack.ZIndex = 2
-    progressBack.Parent = frame
-    local pbc = Instance.new("UICorner"); pbc.CornerRadius = UDim.new(1, 0); pbc.Parent = progressBack
-
-    local progress = Instance.new("Frame")
-    progress.Size = UDim2.new(0, 0, 1, 0)
-    progress.BackgroundColor3 = Color3.fromRGB(61, 255, 138)
-    progress.BorderSizePixel = 0
-    progress.ZIndex = 3
-    progress.Parent = progressBack
-    local pc = Instance.new("UICorner"); pc.CornerRadius = UDim.new(1, 0); pc.Parent = progress
-
-    local bigPlay = Instance.new("Frame")
-    bigPlay.AnchorPoint = Vector2.new(0.5, 0.5)
-    bigPlay.Position = UDim2.new(0.5, 0, 0.5, 0)
-    bigPlay.Size = UDim2.fromOffset(0, 0)
-    bigPlay.BackgroundColor3 = Color3.fromRGB(6, 12, 8)
-    bigPlay.BackgroundTransparency = 0.08
-    bigPlay.BorderSizePixel = 0
-    bigPlay.Visible = false
-    bigPlay.ZIndex = 8
-    bigPlay.Parent = frame
-    local bpc = Instance.new("UICorner"); bpc.CornerRadius = UDim.new(0, 10); bpc.Parent = bigPlay
-    local bps = Instance.new("UIStroke"); bps.Color = Color3.fromRGB(61,255,138); bps.Thickness = 1.5; bps.Parent = bigPlay
-    local bigText = Instance.new("TextLabel")
-    bigText.BackgroundTransparency = 1
-    bigText.Size = UDim2.fromScale(1, 1)
-    bigText.Font = Enum.Font.GothamBlack
-    bigText.TextSize = 22
-    bigText.RichText = true
-    bigText.TextColor3 = Color3.fromRGB(255,255,255)
-    bigText.TextStrokeTransparency = 0.15
-    bigText.ZIndex = 9
-    bigText.Text = "TOUCHDOWN"
-    bigText.Parent = bigPlay
-
-    local matchupCard = Instance.new("Frame")
-    matchupCard.AnchorPoint = Vector2.new(0.5, 0.5)
-    matchupCard.Position = UDim2.new(0.5, 0, 0.5, 0)
-    matchupCard.Size = UDim2.fromOffset(430, 170)
-    matchupCard.BackgroundColor3 = Color3.fromRGB(6, 12, 8)
-    matchupCard.BackgroundTransparency = 0.03
-    matchupCard.BorderSizePixel = 0
-    matchupCard.ZIndex = 13
-    matchupCard.Parent = frame
-    local mcc = Instance.new("UICorner"); mcc.CornerRadius = UDim.new(0, 14); mcc.Parent = matchupCard
-    local mcs = Instance.new("UIStroke"); mcs.Color = Color3.fromRGB(61,255,138); mcs.Thickness = 1.5; mcs.Parent = matchupCard
-
-    local function makeMatchupPanel(asset, fallback, color, x)
-        local panel = Instance.new("Frame")
-        panel.Position = UDim2.fromOffset(x, 42)
-        panel.Size = UDim2.fromOffset(170, 86)
-        panel.BackgroundColor3 = color
-        panel.BackgroundTransparency = 0.1
-        panel.BorderSizePixel = 0
-        panel.ClipsDescendants = true
-        panel.ZIndex = 14
-        panel.Parent = matchupCard
-        local pc = Instance.new("UICorner"); pc.CornerRadius = UDim.new(0, 10); pc.Parent = panel
-        if asset and tostring(asset) ~= "" then
-            local img = Instance.new("ImageLabel")
-            img.BackgroundTransparency = 1
-            img.Size = UDim2.fromScale(1.12, 1.12)
-            img.Position = UDim2.fromScale(-0.06, -0.06)
-            img.Image = tostring(asset)
-            img.ScaleType = Enum.ScaleType.Crop
-            img.ImageTransparency = 0.18
-            img.ZIndex = 14
-            img.Parent = panel
-        else
-            local fake = Instance.new("TextLabel")
-            fake.BackgroundTransparency = 1
-            fake.Size = UDim2.fromScale(1, 1)
-            fake.Font = Enum.Font.GothamBlack
-            fake.Text = fallback
-            fake.TextSize = (#tostring(fallback) > 3) and 32 or 44
-            fake.TextColor3 = Color3.fromRGB(255,255,255)
-            fake.TextStrokeTransparency = 0.35
-            fake.TextTransparency = 0.1
-            fake.ZIndex = 15
-            fake.Parent = panel
-        end
-        return panel
-    end
-
-    makeMatchupPanel(MiamiPhotoAsset, "U", Color3.fromRGB(244,115,33), 18)
-    makeMatchupPanel(opponent.Photo, opponent.Short, opponent.Color, 242)
-
-    local matchupTitle = Instance.new("TextLabel")
-    matchupTitle.BackgroundTransparency = 1
-    matchupTitle.Position = UDim2.fromOffset(0, 8)
-    matchupTitle.Size = UDim2.new(1, 0, 0, 26)
-    matchupTitle.Font = Enum.Font.GothamBlack
-    matchupTitle.TextSize = 18
-    matchupTitle.RichText = true
-    matchupTitle.TextColor3 = Color3.fromRGB(255,255,255)
-    matchupTitle.TextStrokeTransparency = 0.25
-    matchupTitle.ZIndex = 16
-    matchupTitle.Text = '<font color="#3dff8a">MIAMI</font> VS <font color="#ffd166">' .. opponent.Name .. '</font>'
-    matchupTitle.Parent = matchupCard
-
-    local vs = Instance.new("TextLabel")
-    vs.BackgroundTransparency = 1
-    vs.AnchorPoint = Vector2.new(0.5, 0.5)
-    vs.Position = UDim2.new(0.5, 0, 0.54, 0)
-    vs.Size = UDim2.fromOffset(70, 50)
-    vs.Font = Enum.Font.GothamBlack
-    vs.TextSize = 24
-    vs.TextColor3 = Color3.fromRGB(255,255,255)
-    vs.TextStrokeTransparency = 0.15
-    vs.Text = "VS"
-    vs.ZIndex = 17
-    vs.Parent = matchupCard
-
-    local matchupSub = Instance.new("TextLabel")
-    matchupSub.BackgroundTransparency = 1
-    matchupSub.Position = UDim2.fromOffset(0, 136)
-    matchupSub.Size = UDim2.new(1, 0, 0, 20)
-    matchupSub.Font = Enum.Font.GothamSemibold
-    matchupSub.TextSize = 12
-    matchupSub.TextColor3 = Color3.fromRGB(210,220,210)
-    matchupSub.TextStrokeTransparency = 0.55
-    matchupSub.ZIndex = 16
-    matchupSub.Text = "Pregame photos loaded  •  Money generation kickoff"
-    matchupSub.Parent = matchupCard
-
-    task.delay(2.6, function()
-        if matchupCard and matchupCard.Parent then
-            TweenService:Create(matchupCard, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.fromOffset(0, 0), BackgroundTransparency = 1}):Play()
-            for _, d in ipairs(matchupCard:GetDescendants()) do
-                if d:IsA("TextLabel") then TweenService:Create(d, TweenInfo.new(0.2), {TextTransparency = 1, TextStrokeTransparency = 1}):Play() end
-                if d:IsA("ImageLabel") then TweenService:Create(d, TweenInfo.new(0.2), {ImageTransparency = 1}):Play() end
-                if d:IsA("Frame") then TweenService:Create(d, TweenInfo.new(0.2), {BackgroundTransparency = 1}):Play() end
-            end
-            task.wait(0.3)
-            if matchupCard then matchupCard:Destroy() end
-        end
-    end)
-
-    local miamiScore, oppScore = 0, 0
-    local q, secondsLeft = 1, 15 * 60
-    local possession = "MIAMI"
-    local down, distance, yardLine = 1, 10, 25
-    local drivePlays, driveYards, driveStart = 0, 0, 25
-    local momentum = 50
-    local stats = { MiamiPass=0, MiamiRush=0, OppPass=0, OppRush=0, MiamiTO=0, OppTO=0 }
-    local halftimeShown = false
-    local running, finished = true, false
-
-    local function quarterText()
-        if q <= 4 then return "Q" .. q end
-        return "OT" .. tostring(q - 4)
-    end
-
-    local function updateClock()
-        local mins = math.floor(secondsLeft / 60)
-        local secs = secondsLeft % 60
-        quarter.Text = string.format("%s %02d:%02d", quarterText(), mins, secs)
-    end
-
-    local function playBroadcastSound(kind)
-        local ids = getgenv().MiamiFootballSounds
-        local id = ids and ids[kind]
-        if not id then return end
-        pcall(function()
-            local s = Instance.new("Sound")
-            s.SoundId = id
-            s.Volume = 0.8
-            s.Parent = gui
-            s:Play()
-            game:GetService("Debris"):AddItem(s, 5)
-        end)
-    end
-
-    local function fieldName()
-        if possession == "MIAMI" then
-            if yardLine < 50 then return "MIA " .. tostring(math.max(1, yardLine)) end
-            return opponent.Short .. " " .. tostring(math.max(1, 100 - yardLine))
-        else
-            if yardLine > 50 then return opponent.Short .. " " .. tostring(math.max(1, 100 - yardLine)) end
-            return "MIA " .. tostring(math.max(1, yardLine))
-        end
-    end
-
-    local function resetDrive(newPossession)
-        possession = newPossession or ((possession == "MIAMI") and opponent.Short or "MIAMI")
-        down, distance = 1, 10
-        yardLine = (possession == "MIAMI") and 25 or 75
-        driveStart, drivePlays, driveYards = yardLine, 0, 0
-    end
-
-    local function showLowerThird(headline, detail, team)
-        lowerThird.Visible = true
-        lowerThird.Position = UDim2.new(0, -470, 0, 100)
-        lowerThird.BackgroundColor3 = (team == "MIAMI") and Color3.fromRGB(0, 65, 38) or opponent.Color
-        ltTitle.Text = headline
-        ltSub.Text = detail
-        TweenService:Create(lowerThird, TweenInfo.new(0.23, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 100)}):Play()
-        task.delay(2.2, function()
-            if lowerThird.Parent and lowerThird.Visible then
-                TweenService:Create(lowerThird, TweenInfo.new(0.25, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(0, 470, 0, 100)}):Play()
-                task.wait(0.28)
-                if lowerThird.Parent then lowerThird.Visible = false end
-            end
-        end)
-    end
-
-    local function flashStadium(team)
-        local oldColor = stroke.Color
-        local flashColor = (team == "MIAMI") and Color3.fromRGB(61,255,138) or Color3.fromRGB(255,220,120)
-        for i = 1, 3 do
-            if not stroke.Parent then return end
-            stroke.Color = flashColor
-            stroke.Thickness = 3
-            task.wait(0.08)
-            stroke.Color = oldColor
-            stroke.Thickness = 1.8
-            task.wait(0.08)
-        end
-    end
-
-    local function showStatsCard(kind)
-        statsCard.Visible = true
-        statsCard.Size = UDim2.fromOffset(0, 0)
-        local titleText = (kind == "HALF") and "HALFTIME REPORT" or "FINAL REPORT"
-        statsText.Text = string.format(
-            '<font color="#3dff8a"><b>%s</b></font><br/>MIAMI %d  •  %s %d<br/>MIA PASS %d  RUSH %d  TO %d<br/>%s PASS %d  RUSH %d  TO %d',
-            titleText, miamiScore, opponent.Short, oppScore,
-            stats.MiamiPass, stats.MiamiRush, stats.MiamiTO,
-            opponent.Short, stats.OppPass, stats.OppRush, stats.OppTO
-        )
-        TweenService:Create(statsCard, TweenInfo.new(0.25, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.fromOffset(330, 118)}):Play()
-        task.delay((kind == "HALF") and 3 or 4.2, function()
-            if statsCard.Parent and statsCard.Visible then
-                TweenService:Create(statsCard, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.fromOffset(0, 0)}):Play()
-                task.wait(0.22)
-                if statsCard.Parent then statsCard.Visible = false end
-            end
-        end)
-    end
-
-    local function pulseScore(which)
-        local lbl = (which == "MIAMI") and miamiScoreLabel or oppScoreLabel
-        local box = (which == "MIAMI") and miamiBox or oppBox
-        local logo = (which == "MIAMI") and miamiLogo or oppLogo
-        local oldSize = lbl.TextSize
-        local oldPos = box.Position
-        local logoOldSize = logo and logo.Size
-        local logoOldRot = logo and logo.Rotation or 0
-        TweenService:Create(lbl, TweenInfo.new(0.12, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {TextSize = oldSize + 8}):Play()
-        TweenService:Create(box, TweenInfo.new(0.07), {Position = oldPos + UDim2.fromOffset(math.random(-4,4), math.random(-2,2))}):Play()
-        if logo then
-            TweenService:Create(logo, TweenInfo.new(0.16, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                Size = UDim2.fromOffset(42, 42),
-                Rotation = logoOldRot + ((which == "MIAMI") and -8 or 8),
-            }):Play()
-        end
-        task.delay(0.09, function()
-            if box.Parent then TweenService:Create(box, TweenInfo.new(0.12), {Position = oldPos}):Play() end
-        end)
-        task.delay(0.18, function()
-            if lbl.Parent then TweenService:Create(lbl, TweenInfo.new(0.18), {TextSize = oldSize}):Play() end
-            if logo and logo.Parent and logoOldSize then
-                TweenService:Create(logo, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                    Size = logoOldSize,
-                    Rotation = logoOldRot,
-                }):Play()
-            end
-        end)
-    end
-
-    local function showBurst(teamName, points, playerName)
-        bigPlay.Visible = true
-        bigPlay.BackgroundColor3 = (teamName == "MIAMI") and Color3.fromRGB(0, 70, 40) or opponent.Color
-        bigPlay.Size = UDim2.fromOffset(0, 0)
-        bigText.TextTransparency = 0
-        bigText.TextStrokeTransparency = 0.15
-        bigText.Text = string.format("%s +%d<br/><font size=\"14\">%s</font>", teamName, points, playerName)
-        TweenService:Create(bigPlay, TweenInfo.new(0.18, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.fromOffset(310, 58)}):Play()
-
-        for i = 1, 12 do
-            local c = Instance.new("TextLabel")
-            c.BackgroundTransparency = 1
-            c.Size = UDim2.fromOffset(18, 18)
-            c.Position = UDim2.new(0.5, 0, 0.5, 0)
-            c.Font = Enum.Font.GothamBlack
-            c.TextSize = math.random(12, 18)
-            c.Text = (math.random(1, 3) == 1) and "🏈" or "✦"
-            c.TextColor3 = (teamName == "MIAMI") and Color3.fromRGB(61,255,138) or Color3.fromRGB(255,220,120)
-            c.ZIndex = 10
-            c.Parent = frame
-            local dx, dy = math.random(-175, 175), math.random(-70, 70)
-            TweenService:Create(c, TweenInfo.new(0.65, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-                Position = UDim2.new(0.5, dx, 0.5, dy), TextTransparency = 1
-            }):Play()
-            task.delay(0.75, function() if c then c:Destroy() end end)
-        end
-
-        task.delay(0.85, function()
-            if bigPlay.Parent then
-                TweenService:Create(bigText, TweenInfo.new(0.18), {TextTransparency = 1, TextStrokeTransparency = 1}):Play()
-                TweenService:Create(bigPlay, TweenInfo.new(0.22, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.fromOffset(0, 0)}):Play()
-                task.wait(0.24)
-                bigPlay.Visible = false
-            end
-        end)
-    end
-
-    local function setPlay(txt, playerTxt)
-        play.TextTransparency = 0.35
-        play.Position = UDim2.fromOffset(14, 110)
-        play.Text = txt
-        if playerTxt then scorer.Text = playerTxt end
-        TweenService:Create(play, TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            TextTransparency = 0,
-            Position = UDim2.fromOffset(14, 105),
-        }):Play()
-    end
-
-    local function updateAll()
-        updateClock()
-        miamiScoreLabel.Text = tostring(miamiScore)
-        oppScoreLabel.Text = tostring(oppScore)
-        local progressValue = math.clamp(((q - 1) + (1 - (secondsLeft / 900))) / 4, 0, 0.98)
-        if q > 4 then progressValue = 0.98 end
-        progress.Size = UDim2.new(progressValue, 0, 1, 0)
-        local downName = ({"1ST", "2ND", "3RD", "4TH"})[math.clamp(down,1,4)] or "1ST"
-        driveLabel.Text = string.format('%s & %d  •  BALL ON %s  •  DRIVE: %d PLAYS, %d YDS', downName, distance, fieldName(), drivePlays, driveYards)
-        local redZone = (possession == "MIAMI" and yardLine >= 80) or (possession ~= "MIAMI" and yardLine <= 20)
-        redZoneLabel.Text = redZone and "RED ZONE" or ""
-        if redZone then
-            redZoneLabel.TextColor3 = (possession == "MIAMI") and Color3.fromRGB(61,255,138) or Color3.fromRGB(255,90,90)
-        end
-        TweenService:Create(ballMarker, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            Position = UDim2.new(math.clamp(yardLine / 100, 0.03, 0.97), 0, 0.5, 0)
-        }):Play()
-        momentum = math.clamp(momentum, 0, 100)
-        TweenService:Create(momentumFill, TweenInfo.new(0.25), {Size = UDim2.new(momentum / 100, 0, 1, 0)}):Play()
-        ticker.Text = string.format("   LIVE  •  %s BALL  •  MIAMI %d - %s %d  •  %s  •  MOMENTUM %d%%", possession, miamiScore, opponent.Short, oppScore, quarterText(), momentum)
-    end
-
-    local MiamiTD = {
-        "hauls in a fade for the touchdown",
-        "breaks a tackle and scores from the red zone",
-        "takes the jet sweep to the pylon",
-        "catches a strike over the middle for six",
-        "powers across the goal line",
-    }
-    local MiamiFG = {
-        "splits the uprights from 38",
-        "drills the field goal after a long drive",
-        "banks in a clutch kick",
-    }
-    local OppTD = {
-        "answers with a touchdown catch",
-        "finds the edge and scores",
-        "wins the jump ball in the end zone",
-        "caps the drive with a short rushing TD",
-    }
-    local OppFG = {
-        "connects on a field goal",
-        "sneaks the kick inside the upright",
-        "makes it from 42 yards out",
-    }
-
-    local function addPoints(team, points)
-        local playerName, desc, teamLabel, scoreType
-        local gain = math.random(8, 55)
-        drivePlays = drivePlays + math.random(1, 3)
-        driveYards = math.abs(yardLine - driveStart) + gain
-
-        if team == "MIAMI" then
-            playerName = pick(MiamiRoster)
-            teamLabel = "MIAMI"
-            scoreType = (points == 3) and "FIELD GOAL" or "TOUCHDOWN MIAMI"
-            if points == 3 then desc = pick(MiamiFG); stats.MiamiPass = stats.MiamiPass + math.random(8, 35)
-            else desc = pick(MiamiTD); if math.random(1,2)==1 then stats.MiamiPass = stats.MiamiPass + gain else stats.MiamiRush = stats.MiamiRush + gain end end
-            miamiScore = miamiScore + points
-            momentum = momentum + ((points == 3) and 6 or 11)
-            pulseScore("MIAMI")
-            setPlay(string.format('<font color="#3dff8a">%s</font> %s. Miami +%d.', playerName, desc, points),
-                string.format('Last score: <font color="#3dff8a">%s</font> for Miami', playerName))
-            showLowerThird('<font color="#3dff8a">'..scoreType..'</font>', string.format('%s  •  %d yd play  •  Drive: %d plays, %d yards', playerName, gain, drivePlays, driveYards), "MIAMI")
-        else
-            playerName = pick(opponent.Players)
-            teamLabel = opponent.Short
-            scoreType = (points == 3) and (opponent.Short .. " FIELD GOAL") or (opponent.Short .. " TOUCHDOWN")
-            if points == 3 then desc = pick(OppFG); stats.OppPass = stats.OppPass + math.random(8, 35)
-            else desc = pick(OppTD); if math.random(1,2)==1 then stats.OppPass = stats.OppPass + gain else stats.OppRush = stats.OppRush + gain end end
-            oppScore = oppScore + points
-            momentum = momentum - ((points == 3) and 6 or 11)
-            pulseScore("OPP")
-            setPlay(string.format('<font color="#ffd166">%s</font> %s for %s. +%d.', playerName, desc, opponent.Name, points),
-                string.format('Last score: <font color="#ffd166">%s</font> for %s', playerName, opponent.Name))
-            showLowerThird('<font color="#ffd166">'..scoreType..'</font>', string.format('%s  •  %d yd play  •  Drive: %d plays, %d yards', playerName, gain, drivePlays, driveYards), "OPP")
-        end
-        showBurst(teamLabel, points, playerName)
-        task.spawn(function() flashStadium(team) end)
-        playBroadcastSound(points == 3 and "FieldGoal" or "Touchdown")
-        resetDrive((team == "MIAMI") and opponent.Short or "MIAMI")
-        updateAll()
-    end
-
-    local NoScoreEvents = {
-        "Miami forces a punt after a huge third-down stop.",
-        "The defense bends but does not break.",
-        "Drive stalls near midfield. Punt team is out.",
-        "Sack on third down! Crowd is loud.",
-        "Review confirms the runner was short.",
-        "A holding call wipes out a big gain.",
-        "Great coverage downfield, incomplete on third down.",
-        "Clock keeps moving after a short run inside.",
-    }
-
-    updateAll()
-    TweenService:Create(frame, TweenInfo.new(0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Position = UDim2.new(0.5, 0, 0, 54)
-    }):Play()
-
-    task.spawn(function()
-        local x = 207
-        local dir = 1
-        while running and gui.Parent do
-            x = x + (dir * 9)
-            if x > 412 then dir = -1 end
-            if x < 12 then dir = 1 end
-            TweenService:Create(ball, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Position = UDim2.fromOffset(x, 157)}):Play()
-            task.wait(0.55)
-        end
-    end)
+    local score = 0
+    local running = true
+    getgenv().MoneyGenProgress = 0
 
     task.spawn(function()
         while running and gui.Parent do
-            task.wait(math.random(135, 210) / 100)
-            if not running then break end
-
-            secondsLeft = secondsLeft - math.random(70, 150)
-            if secondsLeft <= 0 then
-                if q < 4 then
-                    q = q + 1
-                    secondsLeft = 15 * 60
-                    setPlay(string.format('<font color="#3dff8a">END OF Q%d.</font> Starting %s...', q - 1, quarterText()), "New quarter. Scorebug still live.")
-                    if q == 3 and not halftimeShown then halftimeShown = true; showStatsCard("HALF") end
-                    updateAll()
-                    task.wait(0.8)
-                else
-                    q = q + 1
-                    secondsLeft = 10 * 60
-                    setPlay('<font color="#ffd166">END OF REGULATION.</font> Money generation is still running, so we go to OT.', "Overtime started because generation is still active.")
-                    updateAll()
-                    task.wait(0.8)
-                end
-            end
-
-            drivePlays = drivePlays + 1
-            local gain = math.random(-3, 24)
-            if math.random(1, 100) <= 6 then
-                if possession == "MIAMI" then stats.MiamiTO = stats.MiamiTO + 1 else stats.OppTO = stats.OppTO + 1 end
-                setPlay('<font color="#ff7777">TURNOVER!</font> Defense flips the field.', "Possession changed after a takeaway.")
-                resetDrive((possession == "MIAMI") and opponent.Short or "MIAMI")
-                updateAll()
-                task.wait(0.7)
-            end
-            if possession == "MIAMI" then
-                yardLine = math.clamp(yardLine + math.max(gain, 0), 1, 99)
-                if gain > 0 then stats.MiamiRush = stats.MiamiRush + math.floor(gain * 0.45); stats.MiamiPass = stats.MiamiPass + math.floor(gain * 0.55) end
-            else
-                yardLine = math.clamp(yardLine - math.max(gain, 0), 1, 99)
-                if gain > 0 then stats.OppRush = stats.OppRush + math.floor(gain * 0.45); stats.OppPass = stats.OppPass + math.floor(gain * 0.55) end
-            end
-            if gain >= distance then down, distance = 1, 10 else down = down + 1; distance = math.max(1, distance - math.max(gain, 0)) end
-            if down > 4 then
-                setPlay('Turnover on downs near ' .. fieldName() .. '.', "No score on the drive.")
-                resetDrive((possession == "MIAMI") and opponent.Short or "MIAMI")
-                updateAll()
-                task.wait(0.6)
-            end
-
-            local scoreChance = clampScoreChance(miamiScore, oppScore, q)
-            if (possession == "MIAMI" and yardLine >= 80) or (possession ~= "MIAMI" and yardLine <= 20) then scoreChance = scoreChance + 18 end
-            local r = math.random(1, 100)
-            if r <= scoreChance then
-                local team = (math.random(1, 100) <= 54) and "MIAMI" or "OPP"
-                possession = (team == "MIAMI") and "MIAMI" or opponent.Short
-
-                local roll = math.random(1, 100)
-                local points = 7
-                if roll <= 38 then points = 3
-                elseif roll <= 88 then points = 7
-                elseif roll <= 96 then points = 6
-                else points = 8 end
-
-                addPoints(team, points)
-            else
-                setPlay(pick(NoScoreEvents), "No score on the drive.")
-                if math.random(1, 100) <= 45 then resetDrive((possession == "MIAMI") and opponent.Short or "MIAMI") end
-                updateAll()
-            end
+            local mouse = UserInputService:GetMouseLocation()
+            local targetPos = UDim2.new(0.5, (mouse.X - mainFrame.AbsoluteSize.X/2) * 0.25, 1, 60)
+            TweenService:Create(gunFrame, TweenInfo.new(0.1, Enum.EasingStyle.Linear), {Position = targetPos}):Play()
+            crosshair.Position = UDim2.fromOffset(mouse.X - 12, mouse.Y - 12)
+            task.wait()
         end
     end)
 
-    local function makeRealisticFinal()
-        local finalPairs = {
-            {24,17}, {27,20}, {28,24}, {31,23}, {31,27}, {34,28},
-            {35,31}, {23,20}, {30,24}, {21,17}, {38,31}, {26,20},
-        }
-        local pair = pick(finalPairs)
-        local targetMiami, targetOpp = pair[1], pair[2]
-        if miamiScore > targetMiami then targetMiami = miamiScore end
-        if oppScore > targetOpp then targetOpp = oppScore end
-        if targetMiami <= targetOpp then targetMiami = targetOpp + pick({1,3,4,7}) end
-        miamiScore, oppScore = targetMiami, targetOpp
+    local function shootEffect()
+        flash.BackgroundTransparency = 0.3
+        TweenService:Create(gunBody, TweenInfo.new(0.05), {Position = UDim2.fromOffset(105, 150)}):Play()
+        task.delay(0.05, function()
+            flash.BackgroundTransparency = 1
+            TweenService:Create(gunBody, TweenInfo.new(0.1), {Position = UDim2.fromOffset(105, 130)}):Play()
+        end)
     end
 
-    local function finishGame(success)
-        if finished then return end
-        finished = true
+    local function createTarget()
+        local t = Instance.new("TextButton")
+        t.Size = UDim2.fromOffset(60, 60)
+        t.Position = UDim2.fromScale(math.random(10, 90)/100, math.random(30, 80)/100)
+        t.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+        t.Text = "🏆"
+        t.TextSize = 30
+        t.Parent = mainFrame
+        Instance.new("UICorner", t).CornerRadius = UDim.new(1, 0)
+        Instance.new("UIStroke", t).Color = Color3.new(1,1,1)
+
+        local speedX = math.random(50, 90)/100
+        local speedY = math.random(50, 90)/100
+        local dirX = math.random(1,2)==1 and 1 or -1
+        local dirY = math.random(1,2)==1 and 1 or -1
+
+        t.MouseButton1Click:Connect(function()
+            shootEffect()
+            score = score + 1000
+            scoreLabel.Text = "TROPHIES: " .. score
+            t.Visible = false
+            task.delay(0.4, function()
+                if not running then return end
+                t.Position = UDim2.fromScale(math.random(10, 90)/100, math.random(30, 80)/100)
+                t.Visible = true
+            end)
+        end)
+
+        task.spawn(function()
+            while running and t.Parent do
+                local dt = task.wait()
+                if not t.Visible then continue end
+                local cur = t.Position
+                local nx, ny = cur.X.Scale + (dirX * speedX * dt), cur.Y.Scale + (dirY * speedY * dt)
+                if nx < 0.05 then dirX = 1 elseif nx > 0.95 then dirX = -1 end
+                if ny < 0.25 then dirY = 1 elseif ny > 0.85 then dirY = -1 end
+                t.Position = UDim2.fromScale(math.clamp(nx, 0.05, 0.95), math.clamp(ny, 0.25, 0.85))
+            end
+        end)
+    end
+
+    for i = 1, 6 do createTarget() end
+
+    task.spawn(function()
+        while running and gui.Parent do
+            local prog = getgenv().MoneyGenProgress or 0
+            fill.Size = UDim2.fromScale(math.clamp(prog / 100, 0, 1), 1)
+            progressText.Text = "GENERATE MAX ILLEGAL MONEY: " .. math.floor(prog) .. "%"
+            if prog >= 100 then running = false end
+            task.wait(0.1)
+        end
+        title.Text = "MONEY READY"
+        title.TextColor3 = Color3.fromRGB(0, 255, 100)
+        task.wait(2.5)
+        if gui.Parent then gui:Destroy() end
+    end)
+
+    return function()
+        getgenv().MoneyGenProgress = 100
+        task.wait(0.5)
         running = false
-
-        q = math.min(q, 4)
-        secondsLeft = 0
-
-        if success ~= false then
-            makeRealisticFinal()
-            local mvp = pick(MiamiRoster)
-            setPlay(string.format('<font color="#3dff8a">FINAL!</font> Miami wins %d-%d over %s — money generation complete.', miamiScore, oppScore, opponent.Name),
-                string.format('Player of the game: <font color="#3dff8a">%s</font>', mvp))
-        else
-            setPlay(string.format('<font color="#ff7777">GAME CALLED.</font> Money generation stopped. Miami %d - %s %d.', miamiScore, opponent.Name, oppScore),
-                "Generation stopped before the final whistle.")
-        end
-
-        progress.Size = UDim2.new(1, 0, 1, 0)
-        updateClock()
-        miamiScoreLabel.Text = tostring(miamiScore)
-        oppScoreLabel.Text = tostring(oppScore)
-        ticker.Text = string.format("   FINAL  •  MIAMI %d  -  %s %d  •  %s", miamiScore, opponent.Short, oppScore, success ~= false and "MONEY COMPLETE" or "STOPPED")
-        pulseScore("MIAMI")
-        pulseScore("OPP")
-        showBurst("FINAL", 0, "MIAMI MONEY BOWL")
-        playBroadcastSound("Final")
-        showStatsCard("FINAL")
-
-        task.wait(4.75)
-        if gui and gui.Parent then
-            TweenService:Create(frame, TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(0.5, 0, 0, -200)}):Play()
-            for _, d in ipairs(gui:GetDescendants()) do
-                if d:IsA("TextLabel") then TweenService:Create(d, TweenInfo.new(0.35), {TextTransparency = 1, TextStrokeTransparency = 1}):Play() end
-                if d:IsA("Frame") then TweenService:Create(d, TweenInfo.new(0.35), {BackgroundTransparency = 1}):Play() end
-                if d:IsA("ImageLabel") then TweenService:Create(d, TweenInfo.new(0.35), {ImageTransparency = 1}):Play() end
-                if d:IsA("UIStroke") then TweenService:Create(d, TweenInfo.new(0.35), {Transparency = 1}):Play() end
-            end
-            task.wait(0.45)
-            gui:Destroy()
-        end
+        if gui.Parent then gui:Destroy() end
     end
-
-    return finishGame
 end
 
 function GetGoodCleaner()
@@ -2290,6 +1598,7 @@ end
 
 function GenerateMaxIllegalMoney()
     local Player = LocalPlayer
+    getgenv().MoneyGenProgress = 0
     local function GetFruitCup()
         for _, container in ipairs({Player.Backpack, Player.Character}) do
             if container then
@@ -2310,10 +1619,15 @@ function GenerateMaxIllegalMoney()
     local Found, Cup = GetFruitCup()
     local oldCFrame = Player.Character and Player.Character:FindFirstChild("HumanoidRootPart") and Player.Character.HumanoidRootPart.CFrame
     if Cup and Found and oldCFrame and workspace:FindFirstChild("IceFruit Sell") then
+        getgenv().MoneyGenProgress = 10
         if Cup.Parent == Player.Backpack then Player.Character.Humanoid:EquipTool(Cup); task.wait(1) end
+        getgenv().MoneyGenProgress = 25
         Config:Teleport(workspace["IceFruit Sell"].CFrame); task.wait(0.5)
+        getgenv().MoneyGenProgress = 50
         for _ = 1, 4000 do task.spawn(function() pcall(function() fireproximityprompt(workspace["IceFruit Sell"].ProximityPrompt) end) end) end
+        getgenv().MoneyGenProgress = 75
         Config:Teleport(oldCFrame); task.wait(8)
+        getgenv().MoneyGenProgress = 100
         return
     end
 
@@ -2328,32 +1642,38 @@ function GenerateMaxIllegalMoney()
         end
     end
 
+    getgenv().MoneyGenProgress = 5
     for _, item in ipairs(items) do
         if not Player.Backpack:FindFirstChild(item) then
             pcall(function() ReplicatedStorage:WaitForChild("ExoticShopRemote"):InvokeServer(item) end)
             task.wait(1)
         end
     end
+    getgenv().MoneyGenProgress = 20
     for _, item in ipairs(items) do
         if not Player.Backpack:FindFirstChild(item) then
-            sendNotification("Money", "Need more cash / missing items."); return
+            sendNotification("Money", "Need more cash / missing items."); getgenv().MoneyGenProgress = 100; return
         end
     end
-    if not stove then sendNotification("Money", "Could not find a cooking stove."); return end
+    if not stove then sendNotification("Money", "Could not find a cooking stove."); getgenv().MoneyGenProgress = 100; return end
 
+    getgenv().MoneyGenProgress = 25
     Config:Teleport(stove.CookPart.CFrame); task.wait(1)
     pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false) end)
     Player.Character.HumanoidRootPart.Anchored = true; task.wait(1.5)
     pcall(function() fireproximityprompt(stove:FindFirstChildWhichIsA("ProximityPrompt", true)) end)
+    getgenv().MoneyGenProgress = 35
     task.wait(2)
-    for _, item in ipairs({"FijiWater","FreshWater","Ice-Fruit Bag"}) do
+    for i, item in ipairs({"FijiWater","FreshWater","Ice-Fruit Bag"}) do
         if Player.Backpack:FindFirstChild(item) then
             Player.Character.Humanoid:EquipTool(Player.Backpack[item]); task.wait(1)
             pcall(function() fireproximityprompt(stove:FindFirstChildWhichIsA("ProximityPrompt", true)) end)
+            getgenv().MoneyGenProgress = 35 + (i * 15)
             task.wait(3)
         end
     end
     pcall(function() repeat task.wait() until stove.CookPart.Steam.LoadUI.Enabled == false end)
+    getgenv().MoneyGenProgress = 85
     if not Player.Character:FindFirstChild("Ice-Fruit Cupz") and Player.Backpack:FindFirstChild("Ice-Fruit Cupz") then
         Player.Character.Humanoid:EquipTool(Player.Backpack["Ice-Fruit Cupz"]); task.wait(1)
     end
@@ -2362,16 +1682,19 @@ function GenerateMaxIllegalMoney()
     task.wait(3)
     Player.Character.HumanoidRootPart.Anchored = false
     if workspace:FindFirstChild("IceFruit Sell") then
+        getgenv().MoneyGenProgress = 90
         Config:Teleport(workspace["IceFruit Sell"].CFrame); task.wait(1)
         Player.Character.HumanoidRootPart.Anchored = true; task.wait(1.5)
         if not Player.Character:FindFirstChild("Ice-Fruit Cupz") and Player.Backpack:FindFirstChild("Ice-Fruit Cupz") then
             Player.Character.Humanoid:EquipTool(Player.Backpack["Ice-Fruit Cupz"]); task.wait(1)
         end
         workspace["IceFruit Sell"].ProximityPrompt.HoldDuration = 0
+        getgenv().MoneyGenProgress = 95
         for _ = 1, 4000 do task.spawn(function() pcall(function() fireproximityprompt(workspace["IceFruit Sell"].ProximityPrompt) end) end) end
     end
     Player.Character.HumanoidRootPart.Anchored = false
     pcall(function() StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, true) end)
+    getgenv().MoneyGenProgress = 100
 end
 
 
@@ -4935,7 +4258,7 @@ end
 ------------------------------------------------------------
 
 -- Left Side Groups
-BlueGunModsSection = Tabs.Combat:AddLeftGroupbox("🔫 Weapon Modifications")
+BlueGunModsSection = Tabs.Player:AddLeftGroupbox("🍊 Weapon Modifications")
 
 function bindToggle(displayName, key, flag)
     BlueGunModsSection:AddToggle(flag, {
@@ -5033,7 +4356,7 @@ GonModsSection:AddToggle("GonRainbowBullet", {
 
 
 -- Right Side Groups
-BlueGunSettingsSection = Tabs.Combat:AddRightGroupbox("🍀 Weapon Settings")
+BlueGunSettingsSection = Tabs.Player:AddRightGroupbox("🍀 Weapon Settings")
 BlueGunSettingsSection:AddLabel("100% is default percentage.")
 BlueGunSettingsSection:AddSlider("BlueWM_FireRatePercent", {
     Text = "Fire-Rate Percentage",
@@ -5062,7 +4385,7 @@ BlueGunSettingsSection:AddSlider("BlueWM_EquipSpeed", {
 })
 
 
-BlueGunColorSection = Tabs.Combat:AddRightGroupbox("🎨 Gun Color")
+BlueGunColorSection = Tabs.Player:AddRightGroupbox("🎨 Gun Color")
 BlueGunColorSection:AddToggle("BlueWM_GunColor", {
     Text = "Enable Gun Color",
     Default = false,
@@ -5778,7 +5101,7 @@ BronxCustomOutfitGroup:AddButton("♻️ Reset Clothing", function()
     sendNotification("Outfit", "Clothing reset!")
 end)
 
-BankATMGroup = Tabs["Safe/Dupe"]:AddRightGroupbox("🏦 Bank / ATM")
+BankATMGroup = Tabs.Main:AddRightGroupbox("🏦 Bank / ATM")
 function getBankValue()
     local ok, v = pcall(function() return LocalPlayer.stored.Bank.Value end)
     if ok then return v end; return 0
@@ -5874,7 +5197,7 @@ BankATMGroup:AddToggle("BoxHubAutoWithdraw", {
 })
 
 
-VehicleGroup = Tabs.Player:AddRightGroupbox("🚗 Vehicle Settings")
+VehicleGroup = Tabs.Main:AddRightGroupbox("🚗 Vehicle Settings")
 VehicleGroup:AddToggle("CarFlyEnabled", {
     Text = "Car Fly",
     Default = false,
@@ -6240,12 +5563,25 @@ function loadAutofarmTabElements()
     MovementSection:AddToggle("AF_SpeedBoost", {
         Text = "WalkSpeed",
         Default = false,
-        Callback = function(state) updateSpeedBoostState(state) end
+        Callback = function(state)
+            updateSpeedBoostState(state)
+            getgenv().TrophyWalkSpeedEnabled = state
+            local character = LocalPlayer.Character
+            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+            if humanoid then humanoid.WalkSpeed = state and (getgenv().TrophyWalkSpeed or LuhjayyWalk.Speed or 16) or 16 end
+        end
     })
     MovementSection:AddSlider("LuhjayyWalkSpeed", {
         Text = "Change Walk Speed",
         Min = 16, Max = 500, Default = 16, Rounding = 0,
-        Callback = function(value) LuhjayyWalk.Speed = value end
+        Callback = function(value)
+            value = tonumber(value) or 16
+            LuhjayyWalk.Speed = value
+            getgenv().TrophyWalkSpeed = value
+            local character = LocalPlayer.Character
+            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+            if humanoid and getgenv().TrophyWalkSpeedEnabled then humanoid.WalkSpeed = value end
+        end
     })
     MovementSection:AddLabel("Hold Left Shift for 2× speed.")
     MovementSection:AddToggle("AF_JumpBoost", {
@@ -7132,26 +6468,13 @@ function loadVisualsTabElements()
     })
 
     -- ===== Custom Sky (LEFT) =====
-    local SkySection = Tabs.Visuals:AddLeftGroupbox("🌌 Custom Sky")
-    SkySection:AddButton("🏆 Trophy Sky", function() applyOregonSky("rbxassetid://117792365795089"); sendNotification("Sky", "Trophy Sky enabled") end)
-    SkySection:AddButton("✨ Enable Custom Sky", function() applyOregonSky("rbxassetid://104326479029386"); sendNotification("Sky","Custom sky enabled") end)
+    local SkySection = Tabs.Visuals:AddLeftGroupbox("🏆 Trophy Custom Sky")
+    SkySection:AddButton("🏆 Enable Trophy Custom Sky", function() applyOregonSky("rbxassetid://104326479029386"); sendNotification("Sky","Trophy custom sky enabled") end)
     SkySection:AddButton("🌌 Suhqc Sky", function() applyOregonSky("rbxassetid://119694110219921"); sendNotification("Sky", "Suhqc Sky enabled") end)
     SkySection:AddButton("🌌 K4 Sky", function() applyOregonSky("rbxassetid://88499578180594"); sendNotification("Sky", "K4 Sky enabled") end)
     SkySection:AddButton("🌌 LUH JEFF", function() applyOregonSky("rbxassetid://122181918559502"); sendNotification("Sky", "LUH JEFF enabled") end)
     SkySection:AddButton("🟢 Oregon Sky 1",   function() applyOregonSky("rbxassetid://122991440398431"); sendNotification("Sky","Oregon Sky 1") end)
     SkySection:AddButton("🟢 Oregon Sky 2",   function() applyOregonSky("rbxassetid://72244120320660");  sendNotification("Sky","Oregon Sky 2") end)
-    SkySection:AddButton("🏈 Isiah Horton Sky", function() applyOregonSky("rbxassetid://111540684553492"); sendNotification("Sky","Isiah Horton") end)
-    SkySection:AddButton("🏈 Ryan Williams Sky",function() applyOregonSky("rbxassetid://99177624929587");  sendNotification("Sky","Ryan Williams") end)
-    SkySection:AddButton("🏈 Mali Toney Sky",   function() applyOregonSky("rbxassetid://107159461930095"); sendNotification("Sky","Mali Toney") end)
-    SkySection:AddButton("🏈 Ryan Sky",         function() applyOregonSky("rbxassetid://89289726744867");  sendNotification("Sky","Ryan") end)
-    SkySection:AddButton("🏈 Mali Sky",         function() applyOregonSky("rbxassetid://117286814143954"); sendNotification("Sky","Mali") end)
-    SkySection:AddButton("🏈 Carnell Tate Sky 1", function() applyOregonSky("rbxassetid://78558147022384"); sendNotification("Sky","Carnell Tate 1") end)
-    SkySection:AddButton("🏈 Carnell Tate Sky 2", function() applyOregonSky("rbxassetid://85733377226918"); sendNotification("Sky","Carnell Tate 2") end)
-    SkySection:AddButton("🏈 Carnell Tate Sky 3", function() applyOregonSky("rbxassetid://95476054052430"); sendNotification("Sky","Carnell Tate 3") end)
-    SkySection:AddButton("🏈 Marvin Harrison Sky", function() applyOregonSky("rbxassetid://83521944099069"); sendNotification("Sky","Marvin Harrison") end)
-    SkySection:AddButton("🏈 USC Sky", function() applyOregonSky("rbxassetid://83445363298181"); sendNotification("Sky","USC") end)
-    SkySection:AddButton("🏈 Indiana Sky 1", function() applyOregonSky("rbxassetid://134633514021384"); sendNotification("Sky","Indiana 1") end)
-    SkySection:AddButton("🏈 Indiana Sky 2", function() applyOregonSky("rbxassetid://108824206727603"); sendNotification("Sky","Indiana 2") end)
     SkySection:AddButton("♻️ Reset Skybox",     function() clearAllSkies(); sendNotification("Sky","Reset") end)
 
     -- ===== Player ESP (RIGHT) =====
@@ -7308,13 +6631,13 @@ do
 -- ==========================================
 -- SETTINGS / UI SETTINGS TAB
 -- ==========================================
-MenuGroup = Tabs.Settings:AddLeftGroupbox("🏆 Menu Settings")
+MenuGroup = Tabs.Settings:AddLeftGroupbox("🍊 Menu Settings")
 
-MenuGroup:AddLabel("🏆 Script: TrophyScripts — Obsidian Edition", true)
-MenuGroup:AddLabel("🍀 Discord: discord.gg/trophyscripts", true)
+MenuGroup:AddLabel("🏆 Script: TrophyScripts", true)
+MenuGroup:AddLabel("Discord: discord.gg/trophyscripts", true)
 MenuGroup:AddLabel("Game: THA BRONX 3🐍", true)
-MenuGroup:AddLabel("Developed By Zap 🧙🏽‍♂️", true)
-MenuGroup:AddLabel("Status: Obsidian Edition Loaded ✓", true)
+MenuGroup:AddLabel("Developed By EL FULLY", true)
+MenuGroup:AddLabel("Status: Premium Visuals Loaded ✓", true)
 MenuGroup:AddDivider()
 
 MenuGroup:AddLabel("Menu bind")
@@ -7368,9 +6691,13 @@ MenuGroup:AddLabel("Executor: "..executorName, true)
 
 getgenv().MiamiHeadTagSettings = getgenv().MiamiHeadTagSettings or {}
 local HeadTagSettings = getgenv().MiamiHeadTagSettings
+-- TrophyScripts branding is fixed and enabled every execution so an older
+-- saved Miami/Oregon value cannot silently disable or overwrite the tag.
+HeadTagSettings.Enabled = true
+HeadTagSettings.Text = "discord.gg/trophyscripts"
 if HeadTagSettings.StyleVersion ~= 3 then
     HeadTagSettings.Enabled = HeadTagSettings.Enabled ~= false
-    HeadTagSettings.Text = HeadTagSettings.Text or "discord.gg/trophyscripts"
+    HeadTagSettings.Text = "discord.gg/trophyscripts"
     HeadTagSettings.Size = 32
     HeadTagSettings.Height = 3.4
     HeadTagSettings.Style = "Miami Split"
@@ -7380,10 +6707,6 @@ if HeadTagSettings.StyleVersion ~= 3 then
     HeadTagSettings.Speed = 8
     HeadTagSettings.StyleVersion = 3
 end
--- New color options — added without touching existing settings.
-HeadTagSettings.CustomColor1 = HeadTagSettings.CustomColor1 or Color3.fromRGB(255, 196, 70)
-HeadTagSettings.CustomColor2 = HeadTagSettings.CustomColor2 or Color3.fromRGB(48, 217, 130)
-HeadTagSettings.TagColor = HeadTagSettings.TagColor or Color3.fromRGB(255, 140, 0)
 
 HeadTagGroup = Tabs.Settings:AddRightGroupbox("🏷️ Animated Head Text")
 HeadTagGroup:AddToggle("MiamiHeadTagEnabled", {
@@ -7395,18 +6718,22 @@ HeadTagGroup:AddToggle("MiamiHeadTagEnabled", {
         end
     end
 })
-HeadTagGroup:AddDropdown("MiamiHeadTagColor", {
-    Text = "🎨 Name Tag Color",
-    Values = {"Miami Split", "White", "Black", "Gray", "Red", "Orange", "Yellow", "Green", "Lime", "Cyan", "Blue", "Navy", "Purple", "Pink", "Magenta", "Gold", "Silver", "Brown", "Miami Wave", "Rainbow Wave", "Fire", "Ice", "Toxic", "Royal"},
-    Default = HeadTagSettings.Style or "Miami Split",
-    Callback = function(value) HeadTagSettings.Style = normalizeDropdownValue(value) end
-})
 HeadTagGroup:AddInput("MiamiHeadTagText", {
     Text = "Text", Default = HeadTagSettings.Text, Placeholder = "Text above your head",
     Numeric = false, Finished = true,
     Callback = function(value)
-        HeadTagSettings.Text = tostring(value or "") ~= "" and tostring(value) or "discord.gg/trophyscripts"
+        local newText = tostring(value or "")
+        HeadTagSettings.Text = newText ~= "" and newText or "discord.gg/trophyscripts"
+        if getgenv().MiamiHeadTagControl then
+            getgenv().MiamiHeadTagControl.Refresh()
+        end
     end
+})
+HeadTagGroup:AddDropdown("MiamiHeadTagStyle", {
+    Text = "Moving Gradient",
+    Values = {"Miami Split", "Miami Wave", "Rainbow Wave", "Fire", "Ice", "Toxic", "Royal"},
+    Default = HeadTagSettings.Style,
+    Callback = function(value) HeadTagSettings.Style = normalizeDropdownValue(value) end
 })
 HeadTagGroup:AddDropdown("MiamiHeadTagFont", {
     Text = "Font", Values = {"GothamBlack", "GothamBold", "Arcade", "SciFi", "Cartoon", "Code"},
@@ -7437,160 +6764,7 @@ HeadTagGroup:AddButton("Refresh Head Text", function()
     if getgenv().MiamiHeadTagControl then getgenv().MiamiHeadTagControl.Refresh() end
 end)
 
-ThemePresetGroup = Tabs.Settings:AddRightGroupbox("🎨 Theme Presets")
-
-function ApplyMiamiThemePreset(name, colors)
-    colors = colors or {}
-    if colors.Background then Library:ChangeTheme("Background", colors.Background) end
-    if colors.Inline then Library:ChangeTheme("Inline", colors.Inline) end
-    if colors.Outline then Library:ChangeTheme("Outline", colors.Outline) end
-    if colors.Text then Library:ChangeTheme("Text", colors.Text) end
-    if colors.DarkText then Library:ChangeTheme("Dark Text", colors.DarkText) end
-    if colors.Element then Library:ChangeTheme("Element", colors.Element) end
-    if colors.Accent then Library:ChangeTheme("Accent", colors.Accent) end
-    if MimaiUI then
-        MimaiUI.Accent = colors.Accent or MimaiUI.Accent
-        MimaiUI.AccentSoft = colors.AccentSoft or MimaiUI.AccentSoft
-    end
-    sendNotification("Theme", "Applied " .. tostring(name), 2)
-end
-
-ThemePresetGroup:AddButton("🏆 Trophy Obsidian", function()
-    ApplyMiamiThemePreset("Trophy Obsidian", {
-        Background = Color3.fromRGB(9, 11, 18),
-        Inline = Color3.fromRGB(16, 19, 28),
-        Outline = Color3.fromRGB(36, 42, 56),
-        Element = Color3.fromRGB(22, 26, 36),
-        Text = Color3.fromRGB(237, 240, 248),
-        DarkText = Color3.fromRGB(150, 158, 175),
-        Accent = Color3.fromRGB(255, 196, 70),
-        AccentSoft = Color3.fromRGB(48, 217, 130),
-    })
-end)
-
-ThemePresetGroup:AddButton("🍊 Miami Classic", function()
-    ApplyMiamiThemePreset("Miami Classic", {
-        Background = Color3.fromRGB(13, 15, 18),
-        Inline = Color3.fromRGB(22, 25, 30),
-        Outline = Color3.fromRGB(26, 30, 36),
-        Element = Color3.fromRGB(28, 32, 38),
-        Text = Color3.fromRGB(245, 245, 245),
-        DarkText = Color3.fromRGB(150, 150, 150),
-        Accent = Color3.fromRGB(255, 140, 0),
-        AccentSoft = Color3.fromRGB(61, 255, 138),
-    })
-end)
-
-ThemePresetGroup:AddButton("🟢 Green Glow", function()
-    ApplyMiamiThemePreset("Green Glow", {
-        Background = Color3.fromRGB(8, 14, 10),
-        Inline = Color3.fromRGB(14, 24, 18),
-        Outline = Color3.fromRGB(35, 75, 45),
-        Element = Color3.fromRGB(18, 35, 24),
-        Text = Color3.fromRGB(235, 255, 240),
-        DarkText = Color3.fromRGB(130, 175, 140),
-        Accent = Color3.fromRGB(61, 255, 138),
-        AccentSoft = Color3.fromRGB(255, 140, 0),
-    })
-end)
-
-ThemePresetGroup:AddButton("🌑 Dark Mode", function()
-    ApplyMiamiThemePreset("Dark Mode", {
-        Background = Color3.fromRGB(5, 5, 7),
-        Inline = Color3.fromRGB(13, 13, 16),
-        Outline = Color3.fromRGB(35, 35, 42),
-        Element = Color3.fromRGB(20, 20, 25),
-        Text = Color3.fromRGB(245, 245, 245),
-        DarkText = Color3.fromRGB(120, 120, 130),
-        Accent = Color3.fromRGB(255, 140, 0),
-        AccentSoft = Color3.fromRGB(61, 255, 138),
-    })
-end)
-
-ThemePresetGroup:AddButton("🔥 Orange Fire", function()
-    ApplyMiamiThemePreset("Orange Fire", {
-        Background = Color3.fromRGB(18, 10, 6),
-        Inline = Color3.fromRGB(28, 15, 8),
-        Outline = Color3.fromRGB(86, 45, 12),
-        Element = Color3.fromRGB(36, 20, 10),
-        Text = Color3.fromRGB(255, 242, 228),
-        DarkText = Color3.fromRGB(190, 135, 85),
-        Accent = Color3.fromRGB(255, 140, 0),
-        AccentSoft = Color3.fromRGB(255, 210, 92),
-    })
-end)
-
-ThemePresetGroup:AddButton("💜 Purple Neon", function()
-    ApplyMiamiThemePreset("Purple Neon", {
-        Background=Color3.fromRGB(10,7,18), Inline=Color3.fromRGB(19,13,31),
-        Outline=Color3.fromRGB(70,38,110), Element=Color3.fromRGB(29,19,45),
-        Text=Color3.fromRGB(248,238,255), DarkText=Color3.fromRGB(160,125,190),
-        Accent=Color3.fromRGB(175,75,255), AccentSoft=Color3.fromRGB(255,80,220)
-    })
-end)
-
-ThemePresetGroup:AddButton("🌊 Ocean Blue", function()
-    ApplyMiamiThemePreset("Ocean Blue", {
-        Background=Color3.fromRGB(5,12,20), Inline=Color3.fromRGB(9,25,39),
-        Outline=Color3.fromRGB(24,76,112), Element=Color3.fromRGB(13,36,54),
-        Text=Color3.fromRGB(230,248,255), DarkText=Color3.fromRGB(105,155,185),
-        Accent=Color3.fromRGB(0,155,255), AccentSoft=Color3.fromRGB(0,240,220)
-    })
-end)
-
-ThemePresetGroup:AddButton("🌸 Rose Pink", function()
-    ApplyMiamiThemePreset("Rose Pink", {
-        Background=Color3.fromRGB(18,8,13), Inline=Color3.fromRGB(31,14,23),
-        Outline=Color3.fromRGB(105,38,70), Element=Color3.fromRGB(45,20,33),
-        Text=Color3.fromRGB(255,237,246), DarkText=Color3.fromRGB(190,120,153),
-        Accent=Color3.fromRGB(255,75,145), AccentSoft=Color3.fromRGB(255,160,205)
-    })
-end)
-
-ThemePresetGroup:AddButton("🩵 Cyber Cyan", function()
-    ApplyMiamiThemePreset("Cyber Cyan", {
-        Background=Color3.fromRGB(4,12,14), Inline=Color3.fromRGB(8,23,26),
-        Outline=Color3.fromRGB(15,85,90), Element=Color3.fromRGB(10,35,39),
-        Text=Color3.fromRGB(225,255,255), DarkText=Color3.fromRGB(90,165,170),
-        Accent=Color3.fromRGB(0,255,235), AccentSoft=Color3.fromRGB(55,145,255)
-    })
-end)
-
-ThemePresetGroup:AddButton("🩸 Blood Red", function()
-    ApplyMiamiThemePreset("Blood Red", {
-        Background=Color3.fromRGB(14,4,5), Inline=Color3.fromRGB(26,8,10),
-        Outline=Color3.fromRGB(90,20,25), Element=Color3.fromRGB(39,11,14),
-        Text=Color3.fromRGB(255,235,235), DarkText=Color3.fromRGB(180,95,100),
-        Accent=Color3.fromRGB(235,25,40), AccentSoft=Color3.fromRGB(255,105,65)
-    })
-end)
-
-ThemePresetGroup:AddButton("👑 Gold Luxury", function()
-    ApplyMiamiThemePreset("Gold Luxury", {
-        Background=Color3.fromRGB(12,10,5), Inline=Color3.fromRGB(24,20,9),
-        Outline=Color3.fromRGB(90,70,20), Element=Color3.fromRGB(36,29,12),
-        Text=Color3.fromRGB(255,249,220), DarkText=Color3.fromRGB(180,155,85),
-        Accent=Color3.fromRGB(255,195,45), AccentSoft=Color3.fromRGB(255,235,150)
-    })
-end)
-
-ThemePresetGroup:AddButton("🤍 Arctic White", function()
-    ApplyMiamiThemePreset("Arctic White", {
-        Background=Color3.fromRGB(220,225,232), Inline=Color3.fromRGB(238,241,245),
-        Outline=Color3.fromRGB(165,175,188), Element=Color3.fromRGB(205,212,221),
-        Text=Color3.fromRGB(25,30,38), DarkText=Color3.fromRGB(90,100,115),
-        Accent=Color3.fromRGB(45,125,255), AccentSoft=Color3.fromRGB(0,195,225)
-    })
-end)
-
-ThemePresetGroup:AddButton("🟣 Midnight Violet", function()
-    ApplyMiamiThemePreset("Midnight Violet", {
-        Background=Color3.fromRGB(4,4,10), Inline=Color3.fromRGB(10,9,21),
-        Outline=Color3.fromRGB(42,35,80), Element=Color3.fromRGB(16,14,31),
-        Text=Color3.fromRGB(235,234,255), DarkText=Color3.fromRGB(115,110,155),
-        Accent=Color3.fromRGB(105,85,255), AccentSoft=Color3.fromRGB(185,80,255)
-    })
-end)
+-- Theme presets removed.
 
 Library.ToggleKeybind = Options.MenuKeybind
 
@@ -7627,7 +6801,7 @@ task.defer(function()
         corner.Parent = toggleBtn
 
         local stroke = Instance.new("UIStroke")
-        stroke.Color = Color3.fromRGB(255, 196, 70)
+        stroke.Color = Color3.fromRGB(255, 140, 0)
         stroke.Thickness = 2
         stroke.Parent = toggleBtn
 
@@ -7638,9 +6812,9 @@ task.defer(function()
         icon.Position = UDim2.new(0.5, 0, 0.5, -6)
         icon.Size = UDim2.new(0, 30, 0, 30)
         icon.Font = Enum.Font.GothamBlack
-        icon.Text = "🏆"
+        icon.Text = "M"
         icon.TextSize = 22
-        icon.TextColor3 = Color3.fromRGB(255, 196, 70)
+        icon.TextColor3 = Color3.fromRGB(255, 140, 0)
         icon.ZIndex = 100000
 
         local label = Instance.new("TextLabel")
@@ -7651,7 +6825,7 @@ task.defer(function()
         label.Font = Enum.Font.GothamBold
         label.Text = "MENU"
         label.TextSize = 11
-        label.TextColor3 = Color3.fromRGB(255, 196, 70)
+        label.TextColor3 = Color3.fromRGB(255, 140, 0)
         label.ZIndex = 100000
 
         local dragging = false
@@ -7678,12 +6852,12 @@ task.defer(function()
                 local isOpen = Window and Window.Holder and Window.Holder.Visible
                 pcall(function()
                     TweenService:Create(stroke, TweenInfo.new(0.2), {
-                        Color = isOpen and Color3.fromRGB(255, 196, 70) or Color3.fromRGB(85, 85, 85),
+                        Color = isOpen and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(85, 85, 85),
                         Thickness = isOpen and 2 or 1.5,
                     }):Play()
                 end)
-                icon.TextColor3 = isOpen and Color3.fromRGB(255, 196, 70) or Color3.fromRGB(180, 180, 180)
-                label.TextColor3 = isOpen and Color3.fromRGB(255, 196, 70) or Color3.fromRGB(180, 180, 180)
+                icon.TextColor3 = isOpen and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(180, 180, 180)
+                label.TextColor3 = isOpen and Color3.fromRGB(255, 140, 0) or Color3.fromRGB(180, 180, 180)
                 label.Text = isOpen and "CLOSE" or "MENU"
             end
         end)
@@ -7722,31 +6896,11 @@ end)
 
 task.spawn(function()
     local Palettes = {
-        ["Miami Wave"] = {Color3.fromRGB(255, 196, 70), Color3.fromRGB(255, 225, 150), Color3.fromRGB(48, 217, 130)},
+        ["Miami Wave"] = {Color3.fromRGB(255, 105, 20), Color3.fromRGB(255, 175, 65), Color3.fromRGB(0, 210, 95)},
         ["Fire"] = {Color3.fromRGB(255, 30, 0), Color3.fromRGB(255, 225, 0), Color3.fromRGB(255, 80, 0)},
         ["Ice"] = {Color3.fromRGB(0, 125, 255), Color3.fromRGB(245, 255, 255), Color3.fromRGB(0, 255, 235)},
         ["Toxic"] = {Color3.fromRGB(40, 255, 0), Color3.fromRGB(220, 255, 0), Color3.fromRGB(0, 145, 55)},
         ["Royal"] = {Color3.fromRGB(115, 0, 255), Color3.fromRGB(255, 210, 45), Color3.fromRGB(220, 0, 255)},
-    }
-    -- Solid single colors for the name tag (tuned for vibrancy).
-    local SolidColors = {
-        White   = Color3.fromRGB(255, 255, 255),
-        Black   = Color3.fromRGB(35, 35, 35),
-        Gray    = Color3.fromRGB(180, 180, 180),
-        Red     = Color3.fromRGB(255, 45, 45),
-        Orange  = Color3.fromRGB(255, 150, 0),
-        Yellow  = Color3.fromRGB(255, 240, 0),
-        Green   = Color3.fromRGB(30, 230, 80),
-        Lime    = Color3.fromRGB(160, 255, 0),
-        Cyan    = Color3.fromRGB(0, 255, 240),
-        Blue    = Color3.fromRGB(45, 140, 255),
-        Navy    = Color3.fromRGB(35, 75, 200),
-        Purple  = Color3.fromRGB(185, 80, 255),
-        Pink    = Color3.fromRGB(255, 95, 185),
-        Magenta = Color3.fromRGB(255, 0, 175),
-        Gold    = Color3.fromRGB(255, 205, 50),
-        Silver  = Color3.fromRGB(215, 215, 230),
-        Brown   = Color3.fromRGB(165, 100, 50),
     }
     local Fonts = {
         GothamBlack=Enum.Font.GothamBlack, GothamBold=Enum.Font.GothamBold,
@@ -7774,8 +6928,10 @@ task.spawn(function()
             billboard.Size = UDim2.fromOffset(480, 70)
             billboard.StudsOffset = Vector3.new(0, settings.Height or 3.4, 0)
             billboard.AlwaysOnTop = true
-            billboard.MaxDistance = 700
+            billboard.Enabled = true
+            billboard.MaxDistance = 1000
             billboard.LightInfluence = 0
+            billboard.ClipsDescendants = false
 
             -- Text only: no box, border, icons, or decorations around it.
             local label = Instance.new("TextLabel")
@@ -7786,6 +6942,9 @@ task.spawn(function()
             label.TextYAlignment = Enum.TextYAlignment.Center
             label.TextStrokeColor3 = Color3.fromRGB(0, 0, 0)
             label.TextStrokeTransparency = 0.08
+            label.TextTransparency = 0
+            label.Visible = true
+            label.ZIndex = 10
             label.Parent = billboard
 
             local gradient = Instance.new("UIGradient")
@@ -7809,33 +6968,12 @@ task.spawn(function()
                         ColorSequenceKeypoint.new(1, Color3.fromHSV((hue + 0.5) % 1, 1, 1)),
                     }
                 elseif style == "Miami Split" then
-                    -- Sharp half-gold / half-emerald split (Trophy Obsidian).
+                    -- Sharp half-orange / half-green split requested by user.
                     sequence = ColorSequence.new{
-                        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 196, 70)),
-                        ColorSequenceKeypoint.new(0.48, Color3.fromRGB(255, 196, 70)),
-                        ColorSequenceKeypoint.new(0.52, Color3.fromRGB(48, 217, 130)),
-                        ColorSequenceKeypoint.new(1, Color3.fromRGB(48, 217, 130)),
-                    }
-                elseif style == "Solid Custom" then
-                    -- Single solid color from the prominent "Name Tag Color" picker.
-                    local c = current.TagColor or Color3.fromRGB(255, 140, 0)
-                    sequence = ColorSequence.new{
-                        ColorSequenceKeypoint.new(0, c),
-                        ColorSequenceKeypoint.new(1, c),
-                    }
-                elseif style == "Custom Color" then
-                    -- User-defined gradient between CustomColor1 and CustomColor2.
-                    -- Set both colors identical for a solid name tag.
-                    sequence = ColorSequence.new{
-                        ColorSequenceKeypoint.new(0, current.CustomColor1 or Color3.fromRGB(255, 196, 70)),
-                        ColorSequenceKeypoint.new(1, current.CustomColor2 or Color3.fromRGB(48, 217, 130)),
-                    }
-                elseif SolidColors[style] then
-                    -- A single solid color (White, Black, Orange, etc.).
-                    local c = SolidColors[style]
-                    sequence = ColorSequence.new{
-                        ColorSequenceKeypoint.new(0, c),
-                        ColorSequenceKeypoint.new(1, c),
+                        ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 105, 20)),
+                        ColorSequenceKeypoint.new(0.48, Color3.fromRGB(255, 105, 20)),
+                        ColorSequenceKeypoint.new(0.52, Color3.fromRGB(0, 220, 100)),
+                        ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 220, 100)),
                     }
                 else
                     local colors = Palettes[style] or Palettes["Miami Wave"]
@@ -7880,28 +7018,28 @@ task.defer(function()
             currentKey = tostring(Options.MenuKeybind.Value)
         end
     end)
-    setWatermarkState("Loaded 🏆", currentKey)
+    setWatermarkState("Loaded 🍀", currentKey)
 end)
 
 -- ==========================================
--- TROPHY OBSIDIAN THEME OVERRIDE (GOLD ON NAVY-OBSIDIAN)
+-- MIMAI THEME OVERRIDE (ORIGINAL GREY STYLE)
 -- ==========================================
 ThemeManager:SetLibrary(Library)
 
--- Define the custom Trophy Obsidian theme
-ThemeManager.BuiltInThemes["TrophyObsidian"] = {
+-- Define the custom Mimai theme
+ThemeManager.BuiltInThemes["Mimai"] = {
     1,
     {
-        FontColor = "edf0f8",
-        MainColor = "13141f",     -- Navy-obsidian panel
-        BackgroundColor = "090b12", -- Deep obsidian canvas
-        AccentColor = "ffc446",   -- Trophy gold accent
-        OutlineColor = "242a38"   -- Cool slate outline
+        FontColor = "f5f5f5",
+        MainColor = "1a1a1a", -- Refined dark panel color
+        BackgroundColor = "101010", -- Deep graphite background canvas
+        AccentColor = "ff8c00", -- Orange accent
+        OutlineColor = "2a2a2a" -- Soft charcoal outline
     }
 }
 
 -- Set as active theme
-ThemeManager:ApplyTheme("TrophyObsidian")
+ThemeManager:ApplyTheme("Mimai")
 
 SaveManager:SetLibrary(Library)
 SaveManager:IgnoreThemeSettings()
@@ -7919,3 +7057,170 @@ task.delay(2, function()
     getgenv().MiamiSuppressNotifications = false
 end)
 end
+
+
+-- Aether native settings, themes, and config autoload.
+task.defer(function()
+    pcall(function()
+        local settings = AetherWindow:CreateSettingsPage()
+        settings:CreateConfigsSection()
+        settings:CreateThemingSection()
+        -- Auto-load disabled so movement toggles never enable themselves.
+    end)
+end)
+
+-- Reliable TrophyScripts head tag (CoreGui-hosted so it remains visible locally).
+do
+    local PlayersService = game:GetService("Players")
+    local localPlayer = PlayersService.LocalPlayer
+    local tagGui
+    local characterConnection
+
+    local function destroyTrophyHeadTag()
+        if tagGui then pcall(function() tagGui:Destroy() end); tagGui = nil end
+        local parent = (gethui and gethui()) or game:GetService("CoreGui")
+        local old = parent and parent:FindFirstChild("TrophyScriptsHeadTagGui")
+        if old then pcall(function() old:Destroy() end) end
+        local character = localPlayer.Character
+        local head = character and character:FindFirstChild("Head")
+        if head then
+            for _, name in ipairs({"Miami_DiscordTag", "OregonHeadTag", "Oregon_DiscordTag"}) do
+                local stale = head:FindFirstChild(name)
+                if stale then pcall(function() stale:Destroy() end) end
+            end
+        end
+    end
+
+    local function createTrophyHeadTag(character)
+        destroyTrophyHeadTag()
+        if not character then return end
+        local head = character:WaitForChild("Head", 10)
+        if not head then return end
+
+        local parent = (gethui and gethui()) or game:GetService("CoreGui")
+        local screen = Instance.new("ScreenGui")
+        screen.Name = "TrophyScriptsHeadTagGui"
+        screen.ResetOnSpawn = false
+        screen.IgnoreGuiInset = true
+        screen.DisplayOrder = 999999
+        screen.ZIndexBehavior = Enum.ZIndexBehavior.Global
+        screen.Parent = parent
+        tagGui = screen
+
+        local billboard = Instance.new("BillboardGui")
+        billboard.Name = "TrophyScriptsHeadTag"
+        billboard.Adornee = head
+        billboard.AlwaysOnTop = true
+        billboard.Enabled = true
+        billboard.LightInfluence = 0
+        billboard.MaxDistance = math.huge
+        billboard.Size = UDim2.fromOffset(520, 72)
+        billboard.StudsOffsetWorldSpace = Vector3.new(0, tonumber((getgenv().MiamiHeadTagSettings or {}).Height) or 3.4, 0)
+        billboard.Parent = screen
+
+        local text = Instance.new("TextLabel")
+        text.Name = "DiscordText"
+        text.BackgroundTransparency = 1
+        text.Size = UDim2.fromScale(1, 1)
+        text.Font = Enum.Font.GothamBlack
+        text.Text = tostring((getgenv().MiamiHeadTagSettings or {}).Text or "discord.gg/trophyscripts")
+        text.TextColor3 = Color3.new(1, 1, 1)
+        text.TextSize = 32
+        text.TextStrokeColor3 = Color3.fromRGB(5, 5, 10)
+        text.TextStrokeTransparency = 0
+        text.TextTransparency = 0
+        text.Visible = true
+        text.ZIndex = 100
+        text.Parent = billboard
+
+        local gradient = Instance.new("UIGradient")
+        gradient.Color = ColorSequence.new({
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 200, 61)),
+            ColorSequenceKeypoint.new(0.48, Color3.fromRGB(255, 230, 135)),
+            ColorSequenceKeypoint.new(0.52, Color3.fromRGB(175, 120, 255)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(110, 70, 235)),
+        })
+        gradient.Parent = text
+
+        task.spawn(function()
+            local phase = 0
+            while screen.Parent and billboard.Parent and head.Parent do
+                phase = phase + 0.035
+                text.Text = tostring((getgenv().MiamiHeadTagSettings or {}).Text or "discord.gg/trophyscripts")
+                text.Visible = true
+                text.TextTransparency = 0
+                billboard.Enabled = true
+                billboard.Adornee = head
+                local liveSettings = getgenv().MiamiHeadTagSettings or {}
+                billboard.StudsOffsetWorldSpace = Vector3.new(0, tonumber(liveSettings.Height) or 3.4, 0)
+                text.TextSize = tonumber(liveSettings.Size) or 32
+                gradient.Offset = Vector2.new(math.sin(phase) * 0.32, 0)
+                gradient.Rotation = math.sin(phase * 0.65) * 10
+                text.TextSize = (tonumber((getgenv().MiamiHeadTagSettings or {}).Size) or 32) + math.sin(phase * 1.4)
+                task.wait(0.03)
+            end
+        end)
+    end
+
+    getgenv().MiamiHeadTagSettings = getgenv().MiamiHeadTagSettings or {}
+    getgenv().MiamiHeadTagSettings.Enabled = true
+    if tostring(getgenv().MiamiHeadTagSettings.Text or "") == "" then
+        getgenv().MiamiHeadTagSettings.Text = "discord.gg/trophyscripts"
+    end
+
+    getgenv().MiamiHeadTagControl = {
+        Refresh = function()
+            task.spawn(createTrophyHeadTag, localPlayer.Character or localPlayer.CharacterAdded:Wait())
+        end,
+        Destroy = destroyTrophyHeadTag,
+    }
+
+    if characterConnection then characterConnection:Disconnect() end
+    characterConnection = localPlayer.CharacterAdded:Connect(function(character)
+        task.wait(1)
+        createTrophyHeadTag(character)
+    end)
+
+    task.defer(function()
+        local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+        task.wait(1)
+        createTrophyHeadTag(character)
+    end)
+end
+
+
+-- Keep the selected WalkSpeed applied while its toggle is enabled.
+task.spawn(function()
+    while task.wait(0.1) do
+        if getgenv().TrophyWalkSpeedEnabled then
+            local character = LocalPlayer.Character
+            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+            local speed = tonumber(getgenv().TrophyWalkSpeed) or tonumber(LuhjayyWalk and LuhjayyWalk.Speed) or 16
+            if humanoid and humanoid.WalkSpeed ~= speed then
+                humanoid.WalkSpeed = speed
+            end
+        end
+    end
+end)
+
+
+-- Reapply white accents after every Aether component has registered its theme objects.
+task.defer(function()
+    pcall(function()
+        AetherLibrary:ChangeTheme("Accent Start", Color3.fromRGB(255, 255, 255))
+        AetherLibrary:ChangeTheme("Accent End", Color3.fromRGB(205, 205, 215))
+    end)
+end)
+
+
+-- Final startup safety: WalkSpeed never auto-enables.
+task.defer(function()
+    getgenv().TrophyWalkSpeedEnabled = false
+    if LuhjayyWalk then
+        LuhjayyWalk.Enabled = false
+        LuhjayyWalk.Speed = 16
+    end
+    local character = game:GetService("Players").LocalPlayer.Character
+    local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+    if humanoid then humanoid.WalkSpeed = 16 end
+end)
